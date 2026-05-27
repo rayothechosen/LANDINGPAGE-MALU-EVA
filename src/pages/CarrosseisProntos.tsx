@@ -395,7 +395,21 @@ const CarrosseisProntos = () => {
       }
 
       const { data, error: dbErr } = await query;
-      if (dbErr) throw dbErr;
+      if (dbErr) {
+        console.error("[CarrosseisProntos] Supabase error:", JSON.stringify(dbErr));
+        throw dbErr;
+      }
+      console.log("[CarrosseisProntos] rows com filtros:", data?.length ?? 0);
+
+      // Diagnóstico: se nada veio, loga os primeiros registros sem filtros
+      if (!data || data.length === 0) {
+        const { data: raw } = await supabase
+          .from("creative_sets")
+          .select("id, type, is_active, category, product_name")
+          .limit(10);
+        console.log("[CarrosseisProntos] primeiros registros sem filtro:", JSON.stringify(raw));
+      }
+
       return (data as unknown as CreativeSet[]) ?? [];
     },
     []
@@ -421,8 +435,10 @@ const CarrosseisProntos = () => {
           setChips((prev) => [...new Set([...prev, ...extra])]);
         }
       })
-      .catch(() => {
-        if (!cancelled) setError("Nao foi possivel carregar os carrosseis agora.");
+      .catch((e: unknown) => {
+        const msg = (e as any)?.message ?? String(e);
+        console.error("[CarrosseisProntos] catch:", msg);
+        if (!cancelled) setError(`Erro: ${msg}`);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2, KeyRound } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 const LOGO_URL =
   "https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/Sem%20t%C3%ADtulo%20-%2027%20de%20maio%20de%202026%20%C3%A0s%2000.47.41.png";
@@ -27,10 +28,19 @@ const Login = () => {
     }
 
     setLoading(true);
-    // Simula breve validação
-    await new Promise(r => setTimeout(r, 800));
 
+    // Salva o token demo no localStorage
     localStorage.setItem(DEMO_TOKEN_KEY, token.trim());
+
+    // Sempre cria sessão anônima fresca no Supabase
+    // (necessário para o RLS das tabelas: creative_sets, videos_achadinhos, etc.)
+    try {
+      await supabase.auth.signOut();          // limpa qualquer sessão antiga
+      await supabase.auth.signInAnonymously(); // cria sessão anônima válida
+    } catch {
+      // anonymous auth não habilitado — dados públicos podem ainda funcionar
+    }
+
     navigate(redirectTo, { replace: true });
   };
 
