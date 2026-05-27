@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\gabriel\\\\Desktop\\\\sistemakit\" -Force)",
+      "Bash(Select-Object Mode, Name)",
+      "Bash(Format-Table -AutoSize)"
+    ]
+  }
+}

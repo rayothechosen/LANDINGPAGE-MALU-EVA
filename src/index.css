@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 34 25% 92%;
+    --foreground: 220 30% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 8%;
+
+    --primary: 14 100% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --success: 152 69% 42%;
+    --success-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 90%;
+    --secondary-foreground: 220 20% 25%;
+
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 12% 42%;
+
+    --accent: 14 100% 96%;
+    --accent-foreground: 14 100% 35%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 34 16% 85%;
+    --input: 34 16% 85%;
+    --ring: 14 100% 52%;
+
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card rounded-3xl border border-border;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.07), 0 12px 32px rgba(0,0,0,0.04);
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden text-white font-semibold py-4 px-8 rounded-2xl;
+    background: linear-gradient(135deg, hsl(152 69% 42%) 0%, hsl(152 69% 35%) 100%);
+    box-shadow:
+      0 2px 4px hsl(152 69% 28% / 0.25),
+      0 8px 24px hsl(152 69% 42% / 0.35),
+      inset 0 1px 0 hsl(152 80% 58% / 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .tile-card {
+    @apply relative bg-card rounded-3xl p-5 cursor-pointer overflow-hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.07), 0 12px 32px rgba(0,0,0,0.04);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.12);
+  }
+
+  .tile-card:active {
+    transform: scale(0.97);
+  }
+
+  .option-card {
+    @apply relative bg-card rounded-2xl p-4 cursor-pointer border-2 border-border;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .option-card:active {
+    transform: scale(0.98);
+  }
+
+  .option-card.selected {
+    border-color: hsl(var(--primary));
+    background: linear-gradient(135deg, hsl(14 100% 99%) 0%, hsl(14 100% 96%) 100%);
+    box-shadow:
+      0 0 0 3px hsl(14 100% 52% / 0.12),
+      0 4px 16px hsl(14 100% 52% / 0.18);
+  }
+
+  .niche-card {
+    @apply relative bg-card rounded-2xl p-5 cursor-pointer border-2 border-border flex items-center justify-center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .niche-card:active {
+    transform: scale(0.97);
+  }
+
+  .niche-card.selected {
+    border-color: hsl(var(--primary));
+    background: linear-gradient(135deg, hsl(14 100% 99%) 0%, hsl(14 100% 96%) 100%);
+  }
+
+  .check-badge {
+    @apply w-5 h-5 rounded-full flex items-center justify-center;
+    background: linear-gradient(135deg, hsl(152 69% 45%) 0%, hsl(152 69% 38%) 100%);
+    box-shadow: 0 2px 6px hsl(152 69% 42% / 0.35);
+  }
+
+  .status-row {
+    @apply flex items-center gap-3 p-4 rounded-xl bg-muted/50;
+  }
+
+  .progress-bar {
+    @apply h-1.5 rounded-full bg-muted overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(24 100% 55%) 100%);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hero-gradient {
+    background: hsl(var(--background));
+  }
+
+  .stat-pill {
+    @apply inline-flex items-center gap-1.5 bg-card rounded-full px-3 py-1.5;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .step-indicator {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0;
+  }
+
+  .step-indicator.active {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(24 100% 55%) 100%);
+    color: white;
+    box-shadow: 0 2px 8px hsl(14 100% 52% / 0.35);
+  }
+
+  .step-indicator.completed {
+    background: hsl(var(--success));
+    color: white;
+    box-shadow: 0 2px 8px hsl(152 69% 42% / 0.3);
+  }
+
+  .step-indicator.pending {
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+  }
+}
