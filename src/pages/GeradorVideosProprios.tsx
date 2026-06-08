@@ -16,6 +16,7 @@ const BANNER_URL     = "https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/bann
 type View =
   | "step1"
   | "step2"
+  | "voce_mesmo"
   | "model_config"
   | "model_loading"
   | "model_result"
@@ -163,6 +164,64 @@ function Step1({ onContinue }: { onContinue: () => void }) {
         >
           Continuar
         </button>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Você Mesmo ───────────────────────────────────────────────────────────────
+function VoceMesmoView({ onContinue, onModeloIA }: { onContinue: () => void; onModeloIA: () => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="px-5 pb-10">
+      <div className="glass-card p-5 space-y-4">
+        <div className="text-center">
+          <h2 className="text-[1.15rem] font-extrabold text-foreground mb-1">Sua foto enviada</h2>
+          <p className="text-xs text-muted-foreground">Usaremos sua aparência para o vídeo</p>
+        </div>
+
+        {/* Foto placeholder */}
+        <motion.div
+          initial={{ scale: 0.94, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", damping: 16 }}
+          className="rounded-2xl overflow-hidden border-2 border-primary/30 mx-auto relative bg-muted"
+          style={{ maxHeight: 320, maxWidth: 220 }}
+        >
+          <img
+            src={MODEL_IMG}
+            alt="Sua foto"
+            className="w-full object-cover"
+            style={{ objectPosition: "top" }}
+          />
+          <div className="absolute top-2 left-2 bg-primary/90 backdrop-blur-sm px-2 py-0.5 rounded-full">
+            <span className="text-[9px] font-bold text-white">✓ Foto aprovada</span>
+          </div>
+        </motion.div>
+
+        <button
+          onClick={onContinue}
+          className="w-full flex items-center justify-center gap-2 bg-primary text-white font-bold py-3.5 rounded-2xl text-sm hover:opacity-90 transition-opacity"
+          style={{ boxShadow: "0 4px 16px rgba(255,90,31,0.30)" }}
+        >
+          <Sparkles className="w-4 h-4" />
+          Continuar
+        </button>
+
+        <div className="border-t border-border pt-3">
+          <p className="text-[10px] text-center text-muted-foreground mb-2">ou use um modelo diferente</p>
+          <button
+            onClick={onModeloIA}
+            className="w-full flex items-center gap-3 p-3 rounded-2xl border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left"
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-primary">Modelo de IA</p>
+              <p className="text-[10px] text-muted-foreground">IA cria um modelo realista</p>
+            </div>
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -389,8 +448,8 @@ function FinalResult() {
               Vídeo criado
             </p>
             <div
-              className="rounded-2xl overflow-hidden bg-black border-2 border-primary/30 mx-auto"
-              style={{ aspectRatio: "9/16", maxHeight: 340 }}
+              className="rounded-2xl overflow-hidden bg-black border-2 border-primary mx-auto relative"
+              style={{ aspectRatio: "9/16", maxHeight: 340, boxShadow: "0 0 24px rgba(255,90,31,0.40)" }}
             >
               <video
                 src={RESULT_VIDEO}
@@ -400,6 +459,12 @@ function FinalResult() {
                 autoPlay
                 className="w-full h-full object-cover"
               />
+              {/* Destaque IA badge */}
+              <div className="absolute top-2 left-2 right-2 flex justify-center">
+                <span className="bg-primary text-white text-[9px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-lg">
+                  <Sparkles className="w-2.5 h-2.5" /> Gerado com IA
+                </span>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -447,6 +512,7 @@ export default function GeradorVideosProprios() {
   const headerTitles: Record<View, JSX.Element> = {
     step1:        <>Cole o <span className="text-primary">link do vídeo.</span></>,
     step2:        <>Quem irá <span className="text-primary">aparecer?</span></>,
+    voce_mesmo:   <>Sua <span className="text-primary">foto enviada.</span></>,
     model_config: <>Configure o <span className="text-primary">modelo IA.</span></>,
     model_loading:<>Gerando <span className="text-primary">modelo.</span></>,
     model_result: <>Modelo <span className="text-primary">criado!</span></>,
@@ -455,12 +521,13 @@ export default function GeradorVideosProprios() {
   };
 
   const handleBack = () => {
-    if (view === "step1")        navigate("/");
-    else if (view === "step2")   setView("step1");
+    if (view === "step1")             navigate(-1);
+    else if (view === "step2")        setView("step1");
+    else if (view === "voce_mesmo")   setView("step2");
     else if (view === "model_config") setView("step2");
     else if (view === "model_result") setView("model_config");
-    else if (view === "result")  setView("step1");
-    else navigate("/");
+    else if (view === "result")       setView("step1");
+    else navigate(-1);
   };
 
   return (
@@ -508,7 +575,15 @@ export default function GeradorVideosProprios() {
           {view === "step2" && (
             <motion.div key="step2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <Step2
-                onVoceMesmo={() => setView("model_config")}
+                onVoceMesmo={() => setView("voce_mesmo")}
+                onModeloIA={() => setView("model_config")}
+              />
+            </motion.div>
+          )}
+          {view === "voce_mesmo" && (
+            <motion.div key="voce_mesmo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <VoceMesmoView
+                onContinue={() => setView("video_loading")}
                 onModeloIA={() => setView("model_config")}
               />
             </motion.div>

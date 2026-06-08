@@ -77,16 +77,17 @@ function Dashboard({ onCreate }: { onCreate: () => void }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.06 }}
-        className="bg-card border border-border rounded-2xl overflow-hidden"
+        className="rounded-2xl overflow-hidden"
+        style={{ background: "#075E54" }}
       >
-        <div className="px-4 pt-4 pb-3 border-b border-border/60 flex items-center justify-between">
-          <p className="text-sm font-bold text-foreground">Seus Grupos</p>
-          <span className="text-[10px] font-semibold text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+        <div className="px-4 pt-4 pb-3 border-b border-white/10 flex items-center justify-between">
+          <p className="text-sm font-bold text-white">Seus Grupos</p>
+          <span className="text-[10px] font-semibold text-white/50 bg-white/10 px-2 py-0.5 rounded-full">
             Hoje
           </span>
         </div>
 
-        <div className="divide-y divide-border/40">
+        <div className="divide-y divide-white/10">
           {GRUPOS_FAKE.map((g, i) => (
             <motion.div
               key={g.nome}
@@ -99,14 +100,14 @@ function Dashboard({ onCreate }: { onCreate: () => void }) {
                 <img src={GRUPO_ICON} alt={g.nome} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0 overflow-hidden">
-                <p className="text-sm font-bold text-foreground truncate">{g.nome}</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">
+                <p className="text-sm font-bold text-white truncate">{g.nome}</p>
+                <p className="text-[10px] text-white/50 mt-0.5">
                   {g.ofertas} ofertas enviadas
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-sm font-extrabold text-primary">{g.faturamento}</p>
-                <p className="text-[10px] text-muted-foreground flex items-center justify-end gap-0.5">
+                <p className="text-sm font-extrabold text-white">{g.faturamento}</p>
+                <p className="text-[10px] text-white/50 flex items-center justify-end gap-0.5">
                   <Users className="w-2.5 h-2.5" /> {g.membros} membros
                 </p>
               </div>
@@ -611,7 +612,7 @@ const GruposLucrativos = () => {
   };
 
   const handleBack = () => {
-    if (view === "dashboard") navigate("/");
+    if (view === "dashboard") navigate(-1);
     else setView("dashboard");
   };
 

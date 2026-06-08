@@ -528,7 +528,7 @@ const PackVideos = () => {
       <div className="px-5 pt-10 pb-4">
         <div className="max-w-md mx-auto">
           <button
-            onClick={selectedNicho ? () => setSelectedNicho(null) : () => navigate("/")}
+            onClick={selectedNicho ? () => setSelectedNicho(null) : () => navigate(-1)}
             className="flex items-center gap-1 text-foreground/40 text-xs font-semibold mb-5 hover:text-foreground/70 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />

@@ -210,7 +210,7 @@ export default function Treinamento() {
       {/* ── Header ── */}
       <div className="max-w-md mx-auto px-5 pt-6 pb-2">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
           className="flex items-center gap-1.5 text-sm text-foreground/50 hover:text-foreground transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />

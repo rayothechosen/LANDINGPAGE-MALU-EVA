@@ -3,7 +3,14 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\gabriel\\\\Desktop\\\\sistemakit\" -Force)",
       "Bash(Select-Object Mode, Name)",
-      "Bash(Format-Table -AutoSize)"
+      "Bash(Format-Table -AutoSize)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\gabriel\\\\Downloads\\\\sistemakit-demo\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__8f70ed8b-3d25-4109-b39c-ea5cd904d735__list_projects",
+      "mcp__8f70ed8b-3d25-4109-b39c-ea5cd904d735__execute_sql"
     ]
   }
 }

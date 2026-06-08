@@ -487,7 +487,7 @@ const CarrosseisProntos = () => {
       <div className="px-5 pt-10 pb-4">
         <div className="max-w-md mx-auto">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             className="flex items-center gap-1 text-foreground/40 text-xs font-semibold mb-5 hover:text-foreground/70 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -505,6 +505,20 @@ const CarrosseisProntos = () => {
       <ModuleBanner src="https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/banner-carrosseisprontos.png" alt="Carrosseis Prontos" />
 
       <div className="max-w-md mx-auto">
+        {/* Contador */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="glass-card p-5 mx-5 mb-4 text-center"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <LayoutGrid className="w-5 h-5 text-primary" />
+            <p className="text-3xl font-extrabold text-foreground">+512</p>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">carrosséis disponíveis</p>
+        </motion.div>
+
         {/* Chips de categoria */}
         <div className="px-5 mb-4">
           <div

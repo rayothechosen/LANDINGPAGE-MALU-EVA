@@ -18,6 +18,15 @@ import Treinamento from "./pages/Treinamento";
 import Admin from "./pages/Admin";
 import Conta from "./pages/Conta";
 import NotFound from "./pages/NotFound";
+import DemoIA from "./pages/DemoIA";
+import DemoPV from "./pages/DemoPV";
+import DemoPVI from "./pages/DemoPVI";
+import PublicadorAutomatico from "./pages/PublicadorAutomatico";
+import PlanoPostagem from "./pages/PlanoPostagem";
+import GeradorModeloIA from "./pages/GeradorModeloIA";
+import SimulacaoIA  from "./pages/SimulacaoIA";
+import SimulacaoPVI from "./pages/SimulacaoPVI";
+import SimulacaoVP  from "./pages/SimulacaoVP";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +57,19 @@ const App = () => (
 
           {/* Painel admin — protegido + verificacao de admin interna */}
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+
+          {/* Demos públicos — sem autenticação */}
+          <Route path="/demoia"       element={<DemoIA />} />
+          <Route path="/demopv"       element={<DemoPV />} />
+          <Route path="/demopvi"      element={<DemoPVI />} />
+          <Route path="/simulacao-ia"  element={<SimulacaoIA />} />
+          <Route path="/simulacao-pvi" element={<SimulacaoPVI />} />
+          <Route path="/simulacao-vp"  element={<SimulacaoVP />} />
+
+          {/* Novos módulos */}
+          <Route path="/publicador-automatico" element={<ProtectedRoute><PublicadorAutomatico /></ProtectedRoute>} />
+          <Route path="/plano-postagem"        element={<ProtectedRoute><PlanoPostagem /></ProtectedRoute>} />
+          <Route path="/gerador-modelo-ia"     element={<ProtectedRoute><GeradorModeloIA /></ProtectedRoute>} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

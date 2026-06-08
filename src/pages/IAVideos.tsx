@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import {
   ArrowLeft, Play, Sparkles, Loader2, Check,
   Send, Eye, TrendingUp, DollarSign, Video, X, ShoppingBag,
+  Home, ChefHat, Gem, ShoppingCart, Dumbbell, Baby, Smartphone, PawPrint, LayoutGrid, Leaf, Tag,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
@@ -53,11 +55,11 @@ const REDES_DASH = [
 ];
 
 const TOP_VIDEOS = [
-  { thumb: vid01, title: "Utensílios de Cozinha",    plataforma: "Shopee Vídeo", plataformaColor: "bg-orange-500", views: "102.884", comissao: "R$110,88" },
-  { thumb: vid02, title: "Potes da Shopee",           plataforma: "Shopee Vídeo", plataformaColor: "bg-orange-500", views: "67.432",  comissao: "R$78,55" },
-  { thumb: vid03, title: "Jogo de Cama Rosa",         plataforma: "Instagram",    plataformaColor: "bg-pink-500",   views: "45.219",  comissao: "R$52,30" },
-  { thumb: vid04, title: "Rodo Mágico Dobrável",      plataforma: "Instagram",    plataformaColor: "bg-pink-500",   views: "28.761",  comissao: "R$41,17" },
-  { thumb: vid05, title: "Baratinhos para Casa",      plataforma: "TikTok",       plataformaColor: "bg-zinc-800",   views: "12.858",  comissao: "R$31,22" },
+  { thumb: vid01, title: "Utensílios de Cozinha",    plataforma: "Shopee Vídeo", plataformaColor: "bg-orange-500", views: "38.980", comissao: "R$63,65" },
+  { thumb: vid02, title: "Potes da Shopee",           plataforma: "Shopee Vídeo", plataformaColor: "bg-orange-500", views: "25.531", comissao: "R$41,70" },
+  { thumb: vid03, title: "Jogo de Cama Rosa",         plataforma: "Instagram",    plataformaColor: "bg-pink-500",   views: "17.151", comissao: "R$28,01" },
+  { thumb: vid04, title: "Rodo Mágico Dobrável",      plataforma: "Instagram",    plataformaColor: "bg-pink-500",   views: "10.914", comissao: "R$17,82" },
+  { thumb: vid05, title: "Baratinhos para Casa",      plataforma: "TikTok",       plataformaColor: "bg-zinc-800",   views: "4.873",   comissao: "R$7,93" },
 ];
 
 const RESULT_THUMBS = [vid06, vid07, vid08, vid09, vid10, vid01, vid02, vid03];
@@ -117,6 +119,19 @@ function gerarLegenda(nicho: string, topico: string | null): { legenda: string; 
 }
 
 const DEMO_VIDEO = "https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/antesvideosproprios.mp4";
+
+const NICHO_ICONS: Record<string, LucideIcon> = {
+  "Casa e Decoração": Home,
+  "Cozinha":          ChefHat,
+  "Beleza":           Gem,
+  "Moda":             ShoppingCart,
+  "Fitness":          Dumbbell,
+  "Bebê e Criança":   Baby,
+  "Eletrônicos":      Smartphone,
+  "Pet":              PawPrint,
+  "Organização":      LayoutGrid,
+  "Jardim":           Leaf,
+};
 
 // ─── Supabase helpers ─────────────────────────────────────────────────────────
 async function fetchItensEnriquecidos(planoId: string): Promise<PlanoItem[]> {
@@ -604,6 +619,7 @@ function FormView({
                     }`}>
                       {ativo && <Check className="w-2.5 h-2.5 text-white" />}
                     </div>
+                    {(() => { const Icon = NICHO_ICONS[n.nicho] ?? Tag; return <Icon className="w-3.5 h-3.5 text-primary shrink-0" />; })()}
                     <span className={`text-xs font-semibold ${ativo ? "text-primary" : "text-foreground"}`}>
                       {n.nicho}
                     </span>
@@ -660,8 +676,8 @@ function DashboardView({ onCriar }: { onCriar: () => void }) {
         className="grid grid-cols-2 gap-3"
       >
         {[
-          { icon: <Video className="w-4 h-4 text-primary" />, label: "Vídeos postados", value: "102" },
-          { icon: <Eye className="w-4 h-4 text-primary" />,   label: "Views hoje",      value: "277.154" },
+          { icon: <Video className="w-4 h-4 text-primary" />, label: "Vídeos postados", value: "31" },
+          { icon: <Eye className="w-4 h-4 text-primary" />,   label: "Views hoje",      value: "97.449" },
         ].map(m => (
           <div key={m.label} className="bg-card border border-border rounded-2xl p-4">
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
@@ -768,7 +784,7 @@ function DashboardView({ onCriar }: { onCriar: () => void }) {
             <DollarSign className="w-4 h-4 text-primary" />
           </div>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Comissões hoje</p>
-          <p className="text-xl font-extrabold text-primary mt-0.5">R$314</p>
+          <p className="text-xl font-extrabold text-primary mt-0.5">R$159,11</p>
         </div>
       </motion.div>
 
@@ -825,7 +841,7 @@ const IAVideos = () => {
     :                      "Postagem Automática";
 
   const handleBack = () => {
-    if (view === "dashboard") navigate("/");
+    if (view === "dashboard") navigate(-1);
     else if (view === "result") setView("dashboard");
     else setView("dashboard");
   };

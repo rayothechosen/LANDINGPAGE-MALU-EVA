@@ -654,7 +654,7 @@ export default function CriadorVideosIA() {
   };
 
   const handleBack = () => {
-    if (view === "dashboard") navigate("/");
+    if (view === "dashboard") navigate(-1);
     else if (view === "step1") setView("dashboard");
     else if (view === "step2") setView("step1");
     else if (view === "step3") setView("step2");
