@@ -262,7 +262,7 @@ function TopLogo() {
 function Home({ onNavigate }: { onNavigate:(s:Screen)=>void }) {
   const secondary = [
     { id:"destrava"    as Screen, title:"Destrava TikTok Shop",       desc:"Ainda não tem perfil liberado? A IA movimenta sua conta com vídeos prontos.", Icon:Unlock,       clr:P },
-    { id:"pack"        as Screen, title:"Pack +10.000 Vídeos",  desc:"Vídeos prontos por nicho para alimentar seu perfil e acelerar suas lives.", Icon:Film,          clr:P },
+    { id:"pack"        as Screen, title:"Pack +7.000 Vídeos",  desc:"Vídeos prontos por nicho para alimentar seu perfil e acelerar suas lives.", Icon:Film,          clr:P },
     { id:"produtos"    as Screen, title:"Produtos em Alta",     desc:"Os mais vendidos nas últimas 24h para divulgar nas suas lives.", Icon:TrendingUp,    clr:P },
     { id:"treinamento" as Screen, title:"Treinamento Rápido",   desc:"Configure sua primeira live em poucos minutos.", Icon:GraduationCap, clr:P },
   ];
@@ -448,13 +448,55 @@ function IAStep2Content({ genero, idade, cenario, setGenero, setIdade, setCenari
   );
 }
 
+function IAStep3Content({ duracao, setDuracao, onNext }: {
+  duracao:string; setDuracao:(v:string)=>void; onNext:()=>void;
+}) {
+  return (
+    <motion.div key="ia3" initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }}
+      className="px-5 pb-8">
+      <p className="text-[10px] font-bold tracking-[0.18em] text-foreground/40 uppercase mb-3">Duração</p>
+      <h2 className="text-[1.8rem] font-extrabold leading-[1.1]">
+        Quanto tempo<br /><span style={{ color:P }}>vai durar?</span>
+      </h2>
+      <Divider />
+      <p className="text-foreground/50 text-[12px] mt-3 mb-6">Escolha a duração da sua live no TikTok Shop.</p>
+      <PillGroup
+        label="Duração da live"
+        options={[
+          { id:"1h", label:"1 hora" },
+          { id:"2h", label:"2 horas" },
+          { id:"3h", label:"3 horas" },
+        ]}
+        value={duracao}
+        onChange={setDuracao}
+      />
+      <PrimaryBtn onClick={onNext}>Próximo <ChevronRight className="w-4 h-4" /></PrimaryBtn>
+    </motion.div>
+  );
+}
+
 const PREVIEW_GIFS: Record<string, string> = {
   "01": "https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/gif%20brasil.gif",
   "02": "https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/gif%20militar.gif",
 };
 
 function IAStep4Content({ produto, onNext }: { produto:Produto|null; onNext:()=>void }) {
+  const [generating, setGenerating] = useState(true);
   const gif = produto ? (PREVIEW_GIFS[produto.id] ?? PREVIEW_GIFS["01"]) : null;
+  useEffect(() => {
+    const t = setTimeout(() => setGenerating(false), 2000);
+    return () => clearTimeout(t);
+  }, []);
+  if (generating) return (
+    <motion.div key="gen" initial={{ opacity:0 }} animate={{ opacity:1 }}
+      className="px-5 flex flex-col items-center justify-center min-h-[55vh] gap-4">
+      <Loader2 className="w-10 h-10 animate-spin" style={{ color:P }} />
+      <div className="text-center">
+        <p className="font-extrabold text-[15px]">Gerando prévia da live...</p>
+        <p className="text-[12px] text-foreground/40 mt-1">A IA está preparando sua apresentação</p>
+      </div>
+    </motion.div>
+  );
   return (
     <motion.div key="ia4" initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }}
       className="px-5 pb-8">
@@ -593,28 +635,30 @@ function LivePreparingScreen({ onDone }: { onDone:()=>void }) {
 }
 
 function IALivesFlow({ onBack, initialProduto }: { onBack:()=>void; initialProduto?:Produto }) {
-  const [step, setStep]       = useState<1|2|3|4>(initialProduto ? 2 : 1);
+  const [step, setStep]       = useState<1|2|3|4|5>(initialProduto ? 2 : 1);
   const [produto, setProduto] = useState<Produto|null>(initialProduto ?? null);
   const [genero, setGenero]   = useState("feminino");
   const [idade, setIdade]     = useState("jovem");
   const [cenario, setCenario] = useState("quarto");
+  const [duracao, setDuracao] = useState("1h");
   const [inicio, setInicio]   = useState("agora");
   const [preparing, setPreparing] = useState(false);
   const [success, setSuccess] = useState(false);
-  const names = ["Produto","Apresentador","Prévia","Programar"];
-  const prev  = () => step === 1 ? onBack() : setStep((step - 1) as 1|2|3|4);
+  const names = ["Produto","Apresentador","Duração","Prévia","Programar"];
+  const prev  = () => step === 1 ? onBack() : setStep((step - 1) as 1|2|3|4|5);
   if (success)    return <LiveSuccess onBack={onBack} />;
   if (preparing)  return <LivePreparingScreen onDone={() => { setPreparing(false); setSuccess(true); }} />;
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-md mx-auto">
-        <StepHeader step={step} total={4} stepName={names[step-1]} onBack={prev} />
+        <StepHeader step={step} total={5} stepName={names[step-1]} onBack={prev} />
         <AnimatePresence mode="wait">
           {step===1 && <IAStep1Content key="ia1" produto={produto} onSelect={p => { setProduto(p); setStep(2); }} />}
           {step===2 && <IAStep2Content key="ia2" genero={genero} idade={idade} cenario={cenario}
             setGenero={setGenero} setIdade={setIdade} setCenario={setCenario} onNext={() => setStep(3)} />}
-          {step===3 && <IAStep4Content key="ia3" produto={produto} onNext={() => setStep(4)} />}
-          {step===4 && <IAStep5Content key="ia4" inicio={inicio} setInicio={setInicio} onSubmit={() => setPreparing(true)} />}
+          {step===3 && <IAStep3Content key="ia3" duracao={duracao} setDuracao={setDuracao} onNext={() => setStep(4)} />}
+          {step===4 && <IAStep4Content key="ia4" produto={produto} onNext={() => setStep(5)} />}
+          {step===5 && <IAStep5Content key="ia5" inicio={inicio} setInicio={setInicio} onSubmit={() => setPreparing(true)} />}
         </AnimatePresence>
       </div>
     </div>
