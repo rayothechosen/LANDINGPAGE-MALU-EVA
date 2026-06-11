@@ -27,6 +27,9 @@ import GeradorModeloIA from "./pages/GeradorModeloIA";
 import SimulacaoIA  from "./pages/SimulacaoIA";
 import SimulacaoPVI from "./pages/SimulacaoPVI";
 import SimulacaoVP  from "./pages/SimulacaoVP";
+import VideosAgora  from "./pages/VideosAgora";
+import VideosAgora2 from "./pages/VideosAgora2";
+import LiveShopDemo from "./pages/LiveShopDemo";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +68,9 @@ const App = () => (
           <Route path="/simulacao-ia"  element={<SimulacaoIA />} />
           <Route path="/simulacao-pvi" element={<SimulacaoPVI />} />
           <Route path="/simulacao-vp"  element={<SimulacaoVP />} />
+          <Route path="/videos-agora"   element={<VideosAgora />} />
+          <Route path="/videos-agora-2" element={<VideosAgora2 />} />
+          <Route path="/liveshop"       element={<LiveShopDemo />} />
 
           {/* Novos módulos */}
           <Route path="/publicador-automatico" element={<ProtectedRoute><PublicadorAutomatico /></ProtectedRoute>} />

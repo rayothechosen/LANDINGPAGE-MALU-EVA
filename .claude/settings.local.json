@@ -10,7 +10,28 @@
       "Bash(npm run *)",
       "mcp__Claude_Preview__preview_start",
       "mcp__8f70ed8b-3d25-4109-b39c-ea5cd904d735__list_projects",
-      "mcp__8f70ed8b-3d25-4109-b39c-ea5cd904d735__execute_sql"
+      "mcp__8f70ed8b-3d25-4109-b39c-ea5cd904d735__execute_sql",
+      "Bash(npx vite *)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:5174/src/pages/LiveShopDemo.tsx)",
+      "Bash(curl -s http://localhost:5174/src/App.tsx)",
+      "Bash(curl -s \"http://localhost:5174/src/pages/LiveShopDemo.tsx\")",
+      "Bash(curl -s \"http://localhost:8080/src/pages/LiveShopDemo.tsx\")",
+      "Bash(curl -s \"http://localhost:8080/\")",
+      "Bash(curl -s \"http://localhost:8080/src/main.tsx\")",
+      "Bash(curl -s \"http://localhost:8080/src/App.tsx\")",
+      "Bash(taskkill /F /IM node.exe)",
+      "PowerShell(Stop-Process -Name \"node\" -Force -ErrorAction SilentlyContinue)",
+      "Bash(curl -s \"http://localhost:5175/\")",
+      "Bash(curl -s \"http://localhost:5175/src/App.tsx\")",
+      "Bash(curl -s \"http://localhost:5175/src/pages/LiveShopDemo.tsx\")",
+      "Bash(npx tsc *)",
+      "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")",
+      "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/legendas?limit=1&select=*\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")",
+      "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/hashtags?limit=1&select=*\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")",
+      "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/conteudos?limit=1&select=*\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")",
+      "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/ia_legenda_templates?limit=3&select=*\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")",
+      "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/ia_hashtag_templates?limit=3&select=*\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")"
     ]
   }
 }
