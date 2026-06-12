@@ -20,7 +20,7 @@ const VID_PAGE = 30;
 const CS_PAGE  = 20;
 
 const fluxoImg  = (n: string) => `${R2S}/produto%20shopee%20${n}.PNG`;
-const previaImg = (n: string) => `${R2S}/produto%20shopee%20${n}.PNG`;
+const previaImg = (n: string) => `${R2S}/shopee%20previa%20produto%20${n}.png`;
 const prodImg   = (n: string) => `${R2S}/liveia%20previa%20produto${n}.png`;
 
 const AULAS_SHOPEE = [
