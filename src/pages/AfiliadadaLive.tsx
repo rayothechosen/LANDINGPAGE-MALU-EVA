@@ -19,8 +19,8 @@ const DARK = "#161616";
 const VID_PAGE = 30;
 const CS_PAGE  = 20;
 
-const fluxoImg  = (n: string) => `${R2S}/liveia%20fluxo%20produto${n}.PNG`;
-const previaImg = (n: string) => `${R2S}/shopee%20previa%20produto%20${n}.png`;
+const fluxoImg  = (n: string) => `${R2S}/produto%20shopee%20${n}.PNG`;
+const previaImg = (n: string) => `${R2S}/produto%20shopee%20${n}.PNG`;
 const prodImg   = (n: string) => `${R2S}/liveia%20previa%20produto${n}.png`;
 
 const AULAS_SHOPEE = [
@@ -48,13 +48,17 @@ const PRODUTOS_LIVE: ProdutoLive[] = [
   { id:"02", nome:"Kit Skincare Anti-idade",       preco:"R$ 89,90",  desconto:"-38%", img:fluxoImg("02") },
   { id:"03", nome:"Hidratante Nutritivo Corporal", preco:"R$ 34,90",  desconto:"-45%", img:fluxoImg("03") },
   { id:"04", nome:"Perfume Importado 100ml",       preco:"R$ 119,90", desconto:"-40%", img:fluxoImg("04") },
+  { id:"05", nome:"Bolsa Feminina Premium",        preco:"R$ 79,90",  desconto:"-35%", img:fluxoImg("05") },
+  { id:"06", nome:"Kit Maquiagem Completo",        preco:"R$ 54,90",  desconto:"-48%", img:fluxoImg("06") },
 ];
 
 const PRODUTOS_ALTA = [
-  { id:"01", nome:"Conjunto Fitness Premium",     preco:"R$ 67,90",  precoOrig:"R$ 139,90", desconto:"-52%", badge:"EM ALTA",  rating:5.0, img:prodImg("01"), link:"https://shopee.com.br" },
-  { id:"02", nome:"Kit Skincare Anti-idade",       preco:"R$ 89,90",  precoOrig:"R$ 149,90", desconto:"-40%", badge:"DESTAQUE", rating:4.9, img:prodImg("02"), link:"https://shopee.com.br" },
-  { id:"03", nome:"Hidratante Nutritivo Corporal", preco:"R$ 34,90",  precoOrig:"R$ 63,00",  desconto:"-45%", badge:"POPULAR",  rating:4.8, img:prodImg("03"), link:"https://shopee.com.br" },
-  { id:"04", nome:"Perfume Importado 100ml",       preco:"R$ 119,90", precoOrig:"R$ 199,90", desconto:"-40%", badge:"TOP",      rating:5.0, img:prodImg("04"), link:"https://shopee.com.br" },
+  { id:"01", nome:"Conjunto Fitness Premium",     preco:"R$ 67,90",  precoOrig:"R$ 139,90", desconto:"-52%", badge:"EM ALTA",  rating:5.0, img:fluxoImg("01"), link:"https://shopee.com.br" },
+  { id:"02", nome:"Kit Skincare Anti-idade",       preco:"R$ 89,90",  precoOrig:"R$ 149,90", desconto:"-40%", badge:"DESTAQUE", rating:4.9, img:fluxoImg("02"), link:"https://shopee.com.br" },
+  { id:"03", nome:"Hidratante Nutritivo Corporal", preco:"R$ 34,90",  precoOrig:"R$ 63,00",  desconto:"-45%", badge:"POPULAR",  rating:4.8, img:fluxoImg("03"), link:"https://shopee.com.br" },
+  { id:"04", nome:"Perfume Importado 100ml",       preco:"R$ 119,90", precoOrig:"R$ 199,90", desconto:"-40%", badge:"TOP",      rating:5.0, img:fluxoImg("04"), link:"https://shopee.com.br" },
+  { id:"05", nome:"Bolsa Feminina Premium",        preco:"R$ 79,90",  precoOrig:"R$ 129,90", desconto:"-35%", badge:"NOVO",     rating:4.7, img:fluxoImg("05"), link:"https://shopee.com.br" },
+  { id:"06", nome:"Kit Maquiagem Completo",        preco:"R$ 54,90",  precoOrig:"R$ 109,90", desconto:"-48%", badge:"POPULAR",  rating:4.8, img:fluxoImg("06"), link:"https://shopee.com.br" },
 ];
 
 // ─── Shared UI ────────────────────────────────────────────────────────────────
