@@ -29,7 +29,8 @@ import SimulacaoPVI from "./pages/SimulacaoPVI";
 import SimulacaoVP  from "./pages/SimulacaoVP";
 import VideosAgora  from "./pages/VideosAgora";
 import VideosAgora2 from "./pages/VideosAgora2";
-import LiveShopDemo from "./pages/LiveShopDemo";
+import LiveShopDemo    from "./pages/LiveShopDemo";
+import AfiliadadaLive  from "./pages/AfiliadadaLive";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ const App = () => (
           <Route path="/videos-agora"   element={<VideosAgora />} />
           <Route path="/videos-agora-2" element={<VideosAgora2 />} />
           <Route path="/liveshop"       element={<LiveShopDemo />} />
+          <Route path="/afiliadalive"   element={<AfiliadadaLive />} />
 
           {/* Novos módulos */}
           <Route path="/publicador-automatico" element={<ProtectedRoute><PublicadorAutomatico /></ProtectedRoute>} />
