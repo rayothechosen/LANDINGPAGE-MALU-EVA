@@ -31,6 +31,7 @@ import VideosAgora  from "./pages/VideosAgora";
 import VideosAgora2 from "./pages/VideosAgora2";
 import LiveShopDemo    from "./pages/LiveShopDemo";
 import AfiliadadaLive  from "./pages/AfiliadadaLive";
+import GerenciadorLive  from "./pages/GerenciadorLive";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,9 @@ const App = () => (
           <Route path="/videos-agora-2" element={<VideosAgora2 />} />
           <Route path="/liveshop"       element={<LiveShopDemo />} />
           <Route path="/afiliadalive"   element={<AfiliadadaLive />} />
+          <Route path="/gerenciador-live" element={<GerenciadorLive />} />
+          <Route path="/gerenciador-live-mochila" element={<GerenciadorLive variant="mochila" />} />
+          <Route path="/gerenciador-live-camisa"  element={<GerenciadorLive variant="camisa" />} />
 
           {/* Novos módulos */}
           <Route path="/publicador-automatico" element={<ProtectedRoute><PublicadorAutomatico /></ProtectedRoute>} />
