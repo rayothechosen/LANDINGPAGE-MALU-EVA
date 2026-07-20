@@ -124,7 +124,7 @@ function TopBar() {
             alt=""
             className="w-7 h-7 rounded-full object-cover shrink-0"
           />
-          <span className="text-white text-[13px] font-semibold">Karina Morato</span>
+          <span className="text-white text-[13px] font-semibold">Achadinhos Brasil</span>
         </div>
         <div className="flex items-center gap-1 text-white/70 text-[13px] cursor-pointer">
           <Globe className="w-3.5 h-3.5" />
@@ -148,9 +148,9 @@ type ConsoleTabId = typeof CONSOLE_TABS[number]["id"];
 interface Coupon { id: string; origem: "vendedor" | "tiktok"; resgatados: string; valor: string; regra: string; validoDe: string; validoAte: string; }
 
 const COUPONS: Coupon[] = [
-  { id: "c1", origem: "vendedor", resgatados: "197.200", valor: "R$ 10 de desconto", regra: "em compras acima de R$ 100, máximo R$ 8 de desconto", validoDe: "15/07/2025", validoAte: "21/07/2025" },
-  { id: "c2", origem: "vendedor", resgatados: "197.200", valor: "R$ 10 de desconto", regra: "em compras acima de R$ 100, máximo R$ 8 de desconto", validoDe: "15/07/2025", validoAte: "21/07/2025" },
-  { id: "c3", origem: "tiktok", resgatados: "197.200", valor: "R$ 10 de desconto", regra: "em compras acima de R$ 100, máximo R$ 8 de desconto", validoDe: "15/07/2025", validoAte: "21/07/2025" },
+  { id: "c1", origem: "vendedor", resgatados: "197.200", valor: "R$ 10 de desconto", regra: "em compras acima de R$ 100, máximo R$ 8 de desconto", validoDe: "15/07/2026", validoAte: "21/07/2026" },
+  { id: "c2", origem: "vendedor", resgatados: "197.200", valor: "R$ 10 de desconto", regra: "em compras acima de R$ 100, máximo R$ 8 de desconto", validoDe: "15/07/2026", validoAte: "21/07/2026" },
+  { id: "c3", origem: "tiktok", resgatados: "197.200", valor: "R$ 10 de desconto", regra: "em compras acima de R$ 100, máximo R$ 8 de desconto", validoDe: "15/07/2026", validoAte: "21/07/2026" },
 ];
 
 const COUPON_FILTERS = [
@@ -193,13 +193,14 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
 function ConsolePanel() {
   const [tab, setTab] = useState<ConsoleTabId>("cupom");
   const [filter, setFilter] = useState<CouponFilterId>("todos");
+  const [horarioInicio] = useState(() => formatDataHoraAtual());
   const filtered = COUPONS.filter(c => filter === "todos" || c.origem === filter);
 
   return (
     <div className="w-[380px] shrink-0 border-r border-black/[0.06] flex flex-col">
       <div className="px-5 pt-5 pb-1">
         <p className="text-[17px] font-extrabold text-black">Console de LIVE</p>
-        <p className="text-[12px] text-black/45 mt-0.5">Horário de início: 14 de jul. de 2025, 15:23</p>
+        <p className="text-[12px] text-black/45 mt-0.5">Horário de início: {horarioInicio}</p>
       </div>
 
       <div className="flex px-5 pt-4 gap-1.5">
@@ -274,26 +275,25 @@ interface ProdutoLive {
   impressoesInicial: number;
   viewersInicial: number;
   duracaoInicial: number;
-  encerraApos5s: boolean;
+  encerraNoSegundo?: number; // se definido, a live encerra sozinha ao atingir esse tempo
 }
 
 const PRODUTO_VARIANTS: Record<string, ProdutoLive> = {
   camisa: {
     video: "https://pub-69ddd09562c34185a376f620c936f5db.r2.dev/camisa.mp4",
     img: "https://pub-69ddd09562c34185a376f620c936f5db.r2.dev/camisa.png",
-    nome: "camisa brasil feminina tamanho único",
+    nome: "Camisa Brasil Feminina Tamanho Único",
     preco: "R$ 29,03",
     precoNum: 29.03,
     precoOriginal: "R$ 59,90",
     rating: "6.6",
-    vendidos: "111 vendidos",
+    vendidos: "2.529 vendidos",
     taxaComissao: 0.04,
     gmvInicial: 2903.00,
     cliquesInicial: 528,
     impressoesInicial: 22100,
     viewersInicial: 50,
     duracaoInicial: 33 * 60 + 34,
-    encerraApos5s: false,
   },
   mochila: {
     video: "https://pub-69ddd09562c34185a376f620c936f5db.r2.dev/mochila.mp4",
@@ -303,14 +303,14 @@ const PRODUTO_VARIANTS: Record<string, ProdutoLive> = {
     precoNum: 89.90,
     precoOriginal: "R$ 149,90",
     rating: "6.5",
-    vendidos: "89 vendidos",
+    vendidos: "1.908 vendidos",
     taxaComissao: 0.07,
     gmvInicial: 4674.80, // 52 vendas × R$89,90 → comissão final ≈ R$327,24
     cliquesInicial: 1221,
     impressoesInicial: 102500,
     viewersInicial: 38,
-    duracaoInicial: 2 * 3600 + 5 * 60 + 28,
-    encerraApos5s: true,
+    duracaoInicial: 1 * 3600 + 59 * 60 + 52,
+    encerraNoSegundo: 2 * 3600,
   },
 };
 
@@ -333,6 +333,13 @@ function formatCompactBRL(n: number) {
 function formatCompactNumber(n: number) {
   if (n >= 1000) return `${(n / 1000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil`;
   return String(Math.round(n));
+}
+
+function formatDataHoraAtual() {
+  const d = new Date();
+  const data = d.toLocaleDateString("pt-BR", { day: "numeric", month: "short", year: "numeric" });
+  const hora = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return `${data}, ${hora}`;
 }
 
 const CHAT_SEED = [
@@ -367,33 +374,96 @@ function ChatMessage({ user, tag, msg }: { user: string; tag?: string; msg: stri
   );
 }
 
-function LiveAndChat({ produto }: { produto: ProdutoLive }) {
+interface LiveState { elapsed: number; gmv: number; comissao: number; viewers: number; cliques: number; impressoes: number; vendasCount: number; ended: boolean; pulse: boolean; }
+
+// Estado único da simulação — o cronômetro dita quando a live encerra,
+// e o GMV é a fonte da verdade para o número de vendas e a comissão.
+function useLiveSimulation(produto: ProdutoLive): LiveState {
   const [elapsed, setElapsed] = useState(produto.duracaoInicial);
-  const [chatTab, setChatTab] = useState<"todos" | "produto">("todos");
-  const [messages, setMessages] = useState(CHAT_SEED);
-  const [pinned, setPinned] = useState(true);
+  const [gmv, setGmv] = useState(produto.gmvInicial);
+  const [viewers, setViewers] = useState(produto.viewersInicial);
+  const [cliques, setCliques] = useState(produto.cliquesInicial);
+  const [impressoes, setImpressoes] = useState(produto.impressoesInicial);
   const [ended, setEnded] = useState(false);
-  const chatRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [pulse, setPulse] = useState(false);
 
   // reinicia o roteiro sempre que a variante da live mudar
   useEffect(() => {
     setElapsed(produto.duracaoInicial);
+    setGmv(produto.gmvInicial);
+    setViewers(produto.viewersInicial);
+    setCliques(produto.cliquesInicial);
+    setImpressoes(produto.impressoesInicial);
     setEnded(false);
   }, [produto]);
 
-  // encerra a transmissão 5s após carregar, se a variante pedir
+  // cronômetro — encerra sozinho ao atingir o tempo alvo, se a variante tiver um
   useEffect(() => {
-    if (!produto.encerraApos5s) return;
-    const t = setTimeout(() => setEnded(true), 5000);
+    if (ended) return;
+    const t = setInterval(() => {
+      setElapsed(e => {
+        const next = e + 1;
+        if (produto.encerraNoSegundo != null && next >= produto.encerraNoSegundo) {
+          setEnded(true);
+          return produto.encerraNoSegundo;
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [ended, produto]);
+
+  // venda única 5s após carregar — só para variantes que não encerram sozinhas
+  useEffect(() => {
+    if (produto.encerraNoSegundo != null) return;
+    const t = setTimeout(() => {
+      setGmv(v => v + produto.precoNum);
+      setPulse(true);
+      setTimeout(() => setPulse(false), 900);
+    }, 5000);
     return () => clearTimeout(t);
   }, [produto]);
 
   useEffect(() => {
-    if (ended) { videoRef.current?.pause(); return; }
-    const t = setInterval(() => setElapsed(e => e + 1), 1000);
+    if (ended) return;
+    const t = setInterval(() => setViewers(v => Math.max(10, v - Math.round(Math.random() * 2))), 3000);
     return () => clearInterval(t);
   }, [ended, produto]);
+
+  useEffect(() => {
+    if (ended) return;
+    const t = setInterval(() => setCliques(c => c + 1 + Math.round(Math.random() * 2)), 4500);
+    return () => clearInterval(t);
+  }, [ended, produto]);
+
+  useEffect(() => {
+    if (ended) return;
+    const t = setInterval(() => setImpressoes(v => v + 50 + Math.round(Math.random() * 100)), 5000);
+    return () => clearInterval(t);
+  }, [ended, produto]);
+
+  const comissao = gmv * produto.taxaComissao;
+  const vendasCount = Math.max(1, Math.round(gmv / produto.precoNum));
+
+  return { elapsed, gmv, comissao, viewers, cliques, impressoes, vendasCount, ended, pulse };
+}
+
+function LiveAndChat({ produto, elapsed, ended }: { produto: ProdutoLive; elapsed: number; ended: boolean }) {
+  const [chatTab, setChatTab] = useState<"todos" | "produto">("todos");
+  const [messages, setMessages] = useState(CHAT_SEED);
+  const [pinned, setPinned] = useState(true);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // reinicia o chat sempre que a variante da live mudar
+  useEffect(() => {
+    setMessages(CHAT_SEED);
+  }, [produto]);
+
+  useEffect(() => {
+    if (ended) { videoRef.current?.pause(); return; }
+    videoRef.current?.play().catch(() => {});
+  }, [ended]);
 
   useEffect(() => {
     if (ended) return;
@@ -523,64 +593,10 @@ function StatBlock({ label, value, pulse }: { label: string; value: string; puls
   );
 }
 
-function AnalyticsPanel({ produto }: { produto: ProdutoLive }) {
-  const [gmv, setGmv] = useState(produto.gmvInicial);
-  const [viewers, setViewers] = useState(produto.viewersInicial);
-  const [cliques, setCliques] = useState(produto.cliquesInicial);
-  const [impressoes, setImpressoes] = useState(produto.impressoesInicial);
-  const [ended, setEnded] = useState(false);
-  const [pulse, setPulse] = useState(false);
+function AnalyticsPanel({ produto, gmv, comissao, viewers, cliques, impressoes, vendasCount, pulse }: {
+  produto: ProdutoLive; gmv: number; comissao: number; viewers: number; cliques: number; impressoes: number; vendasCount: number; pulse: boolean;
+}) {
   const [showCart, setShowCart] = useState(false);
-
-  // reinicia o roteiro sempre que o produto (variante da live) mudar
-  useEffect(() => {
-    setGmv(produto.gmvInicial);
-    setViewers(produto.viewersInicial);
-    setCliques(produto.cliquesInicial);
-    setImpressoes(produto.impressoesInicial);
-    setEnded(false);
-  }, [produto]);
-
-  // 5s após carregar: ou encerra a live, ou entra mais uma venda (uma única vez) e para
-  useEffect(() => {
-    const t = setTimeout(() => {
-      if (produto.encerraApos5s) {
-        setEnded(true);
-      } else {
-        setGmv(v => v + produto.precoNum);
-        setPulse(true);
-        setTimeout(() => setPulse(false), 900);
-      }
-    }, 5000);
-    return () => clearTimeout(t);
-  }, [produto]);
-
-  useEffect(() => {
-    if (ended) return;
-    const t = setInterval(() => {
-      setViewers(v => Math.max(10, v - Math.round(Math.random() * 2)));
-    }, 3000);
-    return () => clearInterval(t);
-  }, [ended, produto]);
-
-  useEffect(() => {
-    if (ended) return;
-    const t = setInterval(() => {
-      setCliques(c => c + 1 + Math.round(Math.random() * 2));
-    }, 4500);
-    return () => clearInterval(t);
-  }, [ended, produto]);
-
-  useEffect(() => {
-    if (ended) return;
-    const t = setInterval(() => {
-      setImpressoes(v => v + 50 + Math.round(Math.random() * 100));
-    }, 5000);
-    return () => clearInterval(t);
-  }, [ended, produto]);
-
-  const comissao = gmv * produto.taxaComissao;
-  const vendasCount = Math.max(1, Math.round(gmv / produto.precoNum));
 
   return (
     <div className="flex-1 flex flex-col px-5 py-5 min-w-[300px]">
@@ -632,9 +648,63 @@ function AnalyticsPanel({ produto }: { produto: ProdutoLive }) {
   );
 }
 
+// ─── Resultados da LIVE (popup ao encerrar) ──────────────────────────────────
+function ResultStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-black/[0.03] rounded-2xl px-3 py-3">
+      <p className="text-[10px] text-black/45 mb-1">{label}</p>
+      <p className="text-[15px] font-extrabold text-black">{value}</p>
+    </div>
+  );
+}
+
+function ResultsModal({ live, onClose }: { live: LiveState; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+      <div className="bg-white rounded-3xl w-full max-w-sm p-6 relative">
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center">
+          <X className="w-4 h-4 text-black/50" />
+        </button>
+        <div className="flex flex-col items-center text-center mb-5">
+          <img
+            src="https://pub-69ddd09562c34185a376f620c936f5db.r2.dev/ca499019-e3de-428d-88bb-d0341eedd903.png"
+            alt="TikTok Shop"
+            className="h-12 w-auto object-contain mb-3"
+          />
+          <p className="font-extrabold text-[19px]">Resultados da LIVE</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <ResultStat label="Duração total" value={formatTimer(live.elapsed)} />
+          <ResultStat label="GMV (Líquido)" value={formatCompactBRL(live.gmv)} />
+          <ResultStat label="Comissão estimada" value={formatBRL(live.comissao)} />
+          <ResultStat label="Vendas" value={String(live.vendasCount)} />
+          <ResultStat label="Cliques no produto" value={live.cliques.toLocaleString("pt-BR")} />
+          <ResultStat label="Impressões" value={formatCompactNumber(live.impressoes)} />
+        </div>
+        <button
+          onClick={onClose}
+          className="w-full mt-6 py-3 rounded-2xl font-bold text-white text-[13px] transition-transform active:scale-[0.98]"
+          style={{ background: "#161823" }}
+        >
+          Fechar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Página ───────────────────────────────────────────────────────────────────
 export default function GerenciadorLive({ variant = "camisa" }: { variant?: keyof typeof PRODUTO_VARIANTS }) {
   const produto = PRODUTO_VARIANTS[variant] ?? PRODUTO_VARIANTS.camisa;
+  const live = useLiveSimulation(produto);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    setDismissed(false);
+  }, [produto]);
+
+  const showResults = live.ended && !dismissed;
+
   return (
     <div className="min-w-[1360px] min-h-screen bg-[#f7f7f8] text-black" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <TopBar />
@@ -642,10 +712,22 @@ export default function GerenciadorLive({ variant = "camisa" }: { variant?: keyo
         <Sidebar />
         <div className="flex flex-1">
           <ConsolePanel />
-          <LiveAndChat produto={produto} />
-          <AnalyticsPanel produto={produto} />
+          <LiveAndChat produto={produto} elapsed={live.elapsed} ended={live.ended} />
+          <AnalyticsPanel
+            produto={produto}
+            gmv={live.gmv}
+            comissao={live.comissao}
+            viewers={live.viewers}
+            cliques={live.cliques}
+            impressoes={live.impressoes}
+            vendasCount={live.vendasCount}
+            pulse={live.pulse}
+          />
         </div>
       </div>
+      {showResults && (
+        <ResultsModal live={live} onClose={() => setDismissed(true)} />
+      )}
     </div>
   );
 }

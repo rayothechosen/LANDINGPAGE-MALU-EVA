@@ -34,7 +34,9 @@
       "Bash(curl -s \"https://nilqymbvbcvkxelfqzrz.supabase.co/rest/v1/ia_hashtag_templates?limit=3&select=*\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHF5bWJ2YmN2a3hlbGZxenJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTYwNjksImV4cCI6MjA5MjI5MjA2OX0.4ExPc2MNE9AY6Q_s2HCcm7DwzDMRM90khL4wSYU7wUI\")",
       "Bash(npm install *)",
       "Bash(git config *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
