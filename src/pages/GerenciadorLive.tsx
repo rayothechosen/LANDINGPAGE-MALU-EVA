@@ -327,7 +327,6 @@ const PRODUTO_VARIANTS: Record<string, ProdutoLive> = {
     impressoesInicial: 16400,
     viewersInicial: 22,
     duracaoInicial: 59 * 60 + 52,
-    encerraNoSegundo: 60 * 60,
   },
 };
 
