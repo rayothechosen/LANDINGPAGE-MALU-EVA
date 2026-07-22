@@ -76,6 +76,7 @@ const App = () => (
           <Route path="/afiliadalive"   element={<AfiliadadaLive />} />
           <Route path="/gerenciador-live" element={<GerenciadorLive />} />
           <Route path="/gerenciador-live-mochila" element={<GerenciadorLive variant="mochila" />} />
+          <Route path="/gerenciador-live-dorama"  element={<GerenciadorLive variant="dorama" />} />
           <Route path="/gerenciador-live-camisa"  element={<GerenciadorLive variant="camisa" />} />
 
           {/* Novos módulos */}

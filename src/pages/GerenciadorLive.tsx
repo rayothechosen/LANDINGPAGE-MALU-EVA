@@ -124,7 +124,7 @@ function TopBar() {
             alt=""
             className="w-7 h-7 rounded-full object-cover shrink-0"
           />
-          <span className="text-white text-[13px] font-semibold">Achadinhos Brasil</span>
+          <span className="text-white text-[13px] font-semibold">Marilia Shop</span>
         </div>
         <div className="flex items-center gap-1 text-white/70 text-[13px] cursor-pointer">
           <Globe className="w-3.5 h-3.5" />
@@ -311,6 +311,23 @@ const PRODUTO_VARIANTS: Record<string, ProdutoLive> = {
     viewersInicial: 38,
     duracaoInicial: 1 * 3600 + 59 * 60 + 52,
     encerraNoSegundo: 2 * 3600,
+  },
+  dorama: {
+    video: "https://pub-69ddd09562c34185a376f620c936f5db.r2.dev/TikSave.io_7602272250087132437-hd.mp4",
+    img: "https://pub-69ddd09562c34185a376f620c936f5db.r2.dev/images%20(1).jpg",
+    nome: "Mochila Feminina Escolar Doramas",
+    preco: "R$ 41,05",
+    precoNum: 41.05,
+    precoOriginal: "R$ 91,99",
+    rating: "6.3",
+    vendidos: "1.999 vendidos",
+    taxaComissao: 0.06,
+    gmvInicial: 882.00, // comissão final = 882 × 6% = R$52,92
+    cliquesInicial: 214,
+    impressoesInicial: 16400,
+    viewersInicial: 22,
+    duracaoInicial: 59 * 60 + 52,
+    encerraNoSegundo: 60 * 60,
   },
 };
 
