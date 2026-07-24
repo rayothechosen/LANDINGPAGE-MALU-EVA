@@ -32,6 +32,7 @@ import VideosAgora2 from "./pages/VideosAgora2";
 import LiveShopDemo    from "./pages/LiveShopDemo";
 import AfiliadadaLive  from "./pages/AfiliadadaLive";
 import GerenciadorLive  from "./pages/GerenciadorLive";
+import DestravaTikTokShop from "./pages/DestravaTikTokShop";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,9 @@ const App = () => (
           <Route path="/gerenciador-live-mochila" element={<GerenciadorLive variant="mochila" />} />
           <Route path="/gerenciador-live-dorama"  element={<GerenciadorLive variant="dorama" />} />
           <Route path="/gerenciador-live-camisa"  element={<GerenciadorLive variant="camisa" />} />
+          <Route path="/destrava-tiktok-shop"     element={<DestravaTikTokShop />} />
+          <Route path="/destrava-tiktok-shop/v1"  element={<DestravaTikTokShop versao="v1" />} />
+          <Route path="/destrava-tiktok-shop/v2"  element={<DestravaTikTokShop versao="v2" />} />
 
           {/* Novos módulos */}
           <Route path="/publicador-automatico" element={<ProtectedRoute><PublicadorAutomatico /></ProtectedRoute>} />
