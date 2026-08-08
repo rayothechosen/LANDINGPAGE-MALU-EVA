@@ -1,7 +1,4 @@
 {
-  "framework": "vite",
-  "buildCommand": "npm run build:malu",
-  "outputDirectory": "dist/malu",
   "headers": [
     {
       "source": "/assets/(.*)",
