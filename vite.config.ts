@@ -15,4 +15,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: mode === "eva" ? "dist/eva" : mode === "malu" ? "dist/malu" : "dist",
+  },
 }));

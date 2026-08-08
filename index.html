@@ -1,13 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="%VITE_THEME_COLOR%" />
+    <style>html,body,#root{min-height:100%;margin:0}body{background:#F0EBE6}</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
+    <link rel="preconnect" href="https://pub-087c3f92e3134b8cb358b6210b3554f5.r2.dev" crossorigin />
+    <link rel="dns-prefetch" href="https://pub-69ddd09562c34185a376f620c936f5db.r2.dev" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&amp;display=swap"
+    />
     <script>
-      window.pixelId = "69bf13fa50ddb9e1f2f4604e";
-      var a = document.createElement("script");
-      a.setAttribute("async", "");
-      a.setAttribute("defer", "");
-      a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
-      document.head.appendChild(a);
+      window.pixelId = "%VITE_UTMIFY_PIXEL_ID%";
+
+      function loadTrackingPixels() {
+        [
+          "https://cdn.utmify.com.br/scripts/pixel/pixel.js"
+        ].forEach(function (src) {
+          var script = document.createElement("script");
+          script.async = true;
+          script.src = src;
+          document.head.appendChild(script);
+        });
+      }
+
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadTrackingPixels, { timeout: 1800 });
+      } else {
+        window.setTimeout(loadTrackingPixels, 900);
+      }
     </script>
     <script
       src="https://cdn.utmify.com.br/scripts/utms/latest.js"
@@ -16,28 +41,17 @@
       async
       defer
     ></script>
-    <title>Sistema Comissão Diária</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AI-powered system that creates and manages Shopee affiliate groups on WhatsApp, posting daily offers.">
-    <meta name="author" content="Lovable" />
-    <!-- UTMify TikTok Pixel -->
-    <script>
-      window.tikTokPixelId = "69a2637608037437c55865a0";
-      var b = document.createElement("script");
-      b.setAttribute("async", "");
-      b.setAttribute("defer", "");
-      b.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel-tiktok.js");
-      document.head.appendChild(b);
-    </script>
+    <title>%VITE_SITE_TITLE%</title>
+    <meta name="description" content="%VITE_SITE_DESCRIPTION%">
+    <meta name="author" content="Afiliadas Brasil" />
     
   
   
   
-  <meta property="og:title" content="Sistema Comissão Diária">
-  <meta name="twitter:title" content="Sistema Comissão Diária">
-  <meta property="og:description" content="AI-powered system that creates and manages Shopee affiliate groups on WhatsApp, posting daily offers.">
-  <meta name="twitter:description" content="AI-powered system that creates and manages Shopee affiliate groups on WhatsApp, posting daily offers.">
+  <meta property="og:title" content="%VITE_SITE_TITLE%">
+  <meta name="twitter:title" content="%VITE_SITE_TITLE%">
+  <meta property="og:description" content="%VITE_SITE_DESCRIPTION%">
+  <meta name="twitter:description" content="%VITE_SITE_DESCRIPTION%">
   <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/eadee446-eee5-4011-9139-bd4d4c5e7d82/id-preview-9709b70a--1253796f-4372-4604-8c80-c383a542d0ba.lovable.app-1778247389704.png">
   <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/eadee446-eee5-4011-9139-bd4d4c5e7d82/id-preview-9709b70a--1253796f-4372-4604-8c80-c383a542d0ba.lovable.app-1778247389704.png">
   <meta name="twitter:card" content="summary_large_image">

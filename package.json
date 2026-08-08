@@ -4,11 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "dev": "npm run dev:malu",
+    "dev:eva": "vite --mode eva",
+    "dev:malu": "vite --mode malu",
+    "build": "npm run build:malu",
+    "build:eva": "vite build --mode eva",
+    "build:malu": "vite build --mode malu",
+    "build:all": "npm run build:eva && npm run build:malu",
+    "build:dev": "npm run build:malu",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "npm run preview:malu",
+    "preview:eva": "vite preview --outDir dist/eva",
+    "preview:malu": "vite preview --outDir dist/malu"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

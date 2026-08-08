@@ -1,25 +1,23 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LiveShopDemo from "./pages/LiveShopDemo";
-import Eva from "./pages/Eva";
-import Malu from "./pages/Malu";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import LpEva from "./pages/LpEva";
+import LpMalu from "./pages/LpMalu";
+import Obrigado from "./pages/Obrigado";
+
+const activeVariant = import.meta.env.VITE_LP_VARIANT;
+
+if (activeVariant !== "eva" && activeVariant !== "malu") {
+  throw new Error("VITE_LP_VARIANT deve ser 'eva' ou 'malu'.");
+}
+
+const ActiveLandingPage = activeVariant === "eva" ? LpEva : LpMalu;
 
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Navigate to="/liveshop" replace />} />
-
-      <Route path="/liveshop" element={<LiveShopDemo />} />
-
-      <Route path="/eva" element={<Eva />} />
-      <Route path="/eva/v1" element={<Eva versao="v1" />} />
-      <Route path="/eva/v2" element={<Eva versao="v2" />} />
-
-      <Route path="/malu" element={<Malu />} />
-
-      {/* Rotas antigas do Destrava — redirecionam para a Eva */}
-      <Route path="/destrava-tiktok-shop" element={<Navigate to="/eva" replace />} />
-      <Route path="/destrava-tiktok-shop/v1" element={<Navigate to="/eva/v1" replace />} />
-      <Route path="/destrava-tiktok-shop/v2" element={<Navigate to="/eva/v2" replace />} />
+      <Route path="/" element={<ActiveLandingPage />} />
+      <Route path="/obrigado" element={<Obrigado produto={activeVariant} />} />
+      <Route path={`/obrigado/${activeVariant}`} element={<Obrigado produto={activeVariant} />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>
 );
