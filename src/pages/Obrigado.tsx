@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { LP_VARIANTS, type LpVariant } from "@/lib/lpVariants";
 
 const CheckIcon = () => (
@@ -17,8 +16,6 @@ const CheckIcon = () => (
 );
 
 const ObrigadoContent = ({ variant }: { variant: LpVariant }) => {
-  const lpPath = "/";
-
   useEffect(() => {
     document.title = `Compra recebida · ${variant.nome}`;
   }, [variant.nome]);
@@ -66,27 +63,13 @@ const ObrigadoContent = ({ variant }: { variant: LpVariant }) => {
             Confira o e-mail usado na compra. Seu acesso à {variant.nome} e todas as instruções estarão lá.
           </p>
 
-          <div className="my-7 rounded-2xl bg-[var(--brand-background)] p-5 text-left">
+          <div className="mt-7 rounded-2xl bg-[var(--brand-background)] p-5 text-left">
             <p className="text-sm font-extrabold text-foreground">Não encontrou o e-mail?</p>
             <p className="mt-2 text-xs leading-relaxed text-foreground/55">
               Aguarde alguns minutos e confira também as pastas Spam, Promoções e Lixo eletrônico.
             </p>
           </div>
 
-          <a
-            href={`mailto:suporte@afiliadasbrasil.com?subject=Ajuda com meu acesso à ${variant.nome}`}
-            className="flex w-full items-center justify-center rounded-full px-6 py-4 text-sm font-extrabold text-white active:scale-[0.98]"
-            style={{
-              background: "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-              boxShadow: "0 10px 26px color-mix(in srgb, var(--brand-primary) 30%, transparent)",
-            }}
-          >
-            PRECISO DE AJUDA
-          </a>
-
-          <Link to={lpPath} className="mt-5 inline-block text-xs font-semibold text-foreground/45 underline underline-offset-4">
-            Voltar para a página da {variant.nome}
-          </Link>
         </section>
 
         <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.16em] text-foreground/35">

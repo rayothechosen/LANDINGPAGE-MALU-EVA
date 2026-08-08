@@ -11,10 +11,16 @@ if (activeVariant !== "eva" && activeVariant !== "malu") {
 
 const ActiveLandingPage = activeVariant === "eva" ? LpEva : LpMalu;
 
+const EmptyHome = () => (
+  <main className="min-h-screen" style={{ background: "#F0EBE6" }} aria-label="Página inicial" />
+);
+
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<ActiveLandingPage />} />
+      <Route path="/" element={<EmptyHome />} />
+      <Route path="/home" element={<EmptyHome />} />
+      <Route path="/lp-v1" element={<ActiveLandingPage />} />
       <Route path="/obrigado" element={<Obrigado produto={activeVariant} />} />
       <Route path={`/obrigado/${activeVariant}`} element={<Obrigado produto={activeVariant} />} />
       <Route path="*" element={<Navigate to="/" replace />} />

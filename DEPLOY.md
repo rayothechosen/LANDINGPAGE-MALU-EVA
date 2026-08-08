@@ -41,7 +41,8 @@ Os arquivos `vercel.eva.json` e `vercel.malu.json` contêm as mesmas configuraç
 
 ## Rotas de cada deploy
 
-- `/` abre a landing page correspondente.
+- `/` e `/home` não exibem a landing page.
+- `/lp-v1` abre a landing page correspondente.
 - `/obrigado` abre a página de obrigado correspondente.
 - `/obrigado/eva` permanece disponível somente na build Eva.
 - `/obrigado/malu` permanece disponível somente na build Malu.
