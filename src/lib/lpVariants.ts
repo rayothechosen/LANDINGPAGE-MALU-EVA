@@ -67,7 +67,7 @@ export const LP_VARIANTS: Record<"malu" | "eva", LpVariant> = {
     copy: {
       assistente: "Malu",
       ctaLabel: "QUERO A MALU TRABALHANDO PRA MIM",
-      checkoutLink: "https://checkout.perfectpay.com.br/pay/PPU38CQD3Q9",
+      checkoutLink: "https://checkout.perfectpay.com.br/pay/PPU38CQF7CI",
       logoUrl: "https://pub-087c3f92e3134b8cb358b6210b3554f5.r2.dev/logo%20shopee.png",
       logoAlt: "Shopee",
       naPlataforma: "na Shopee",
@@ -151,7 +151,7 @@ export const LP_VARIANTS: Record<"malu" | "eva", LpVariant> = {
     copy: {
       assistente: "Eva",
       ctaLabel: "QUERO A EVA TRABALHANDO PRA MIM",
-      checkoutLink: "https://checkout.perfectpay.com.br/pay/PPU38CQF3I7",
+      checkoutLink: "https://checkout.perfectpay.com.br/pay/PPU38CQF7CL",
       logoUrl: "https://pub-e79c36fa1fb84177b4cf2c066a2fefae.r2.dev/tiktoklogo.png",
       logoAlt: "TikTok",
       naPlataforma: "no TikTok Shop",
