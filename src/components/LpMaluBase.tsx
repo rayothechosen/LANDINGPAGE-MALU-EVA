@@ -59,9 +59,9 @@ const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
   const CTA_LABEL = copy.ctaLabel;
   const CHECKOUT_LINK = copy.checkoutLink;
   const isEva = variant.id === "eva";
-  const vslPlayerId = isEva ? "6a5b00e2d87f51a71ede7042" : "6a7b8f1d3aa8434ef5c7d566";
+  const vslPlayerId = isEva ? "6a7ba2a41399a6fdc41f45ed" : "6a7b8f1d3aa8434ef5c7d566";
   const vslPlayerScript = isEva
-    ? "https://scripts.converteai.net/b4eae634-a642-471f-b580-88ad9ba9c8b1/players/6a5b00e2d87f51a71ede7042/v4/player.js"
+    ? "https://scripts.converteai.net/84921071-af8a-4102-8d78-2be90931e856/players/6a7ba2a41399a6fdc41f45ed/v4/player.js"
     : "https://scripts.converteai.net/84921071-af8a-4102-8d78-2be90931e856/players/6a7b8f1d3aa8434ef5c7d566/v4/player.js";
   const introSteps = [
     "Encontra os produtos que mais vendem no seu nicho",
@@ -162,7 +162,7 @@ const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
               className="rounded-[1.1rem] overflow-hidden"
               dangerouslySetInnerHTML={{
                 __html: isEva
-                  ? `<vturb-smartplayer id="vid-${vslPlayerId}" style="display:block;margin:0 auto;width:100%;max-width:400px;aspect-ratio:3/4;"></vturb-smartplayer>`
+                  ? `<vturb-smartplayer id="vid-${vslPlayerId}" style="display:block;margin:0 auto;width:100%;max-width:400px;"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:133.33333333333331% 0 0;z-index:0;background-color:black;"></div></vturb-smartplayer>`
                   : `<vturb-smartplayer id="vid-${vslPlayerId}" style="display:block;margin:0 auto;width:100%;max-width:400px;"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:148.88888888888889% 0 0;z-index:0;background-color:black;"></div></vturb-smartplayer>`,
               }}
             />
