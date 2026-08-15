@@ -67,7 +67,7 @@ export const LP_VARIANTS: Record<"malu" | "eva", LpVariant> = {
     copy: {
       assistente: "Malu",
       ctaLabel: "QUERO A MALU TRABALHANDO PRA MIM",
-      checkoutLink: "https://checkout.perfectpay.com.br/pay/PPU38CQF7CI",
+      checkoutLink: "https://checkout.perfectpay.com.br/pay/PPU38CQFCD0",
       logoUrl: "https://pub-087c3f92e3134b8cb358b6210b3554f5.r2.dev/logo%20shopee.png",
       logoAlt: "Shopee",
       naPlataforma: "na Shopee",

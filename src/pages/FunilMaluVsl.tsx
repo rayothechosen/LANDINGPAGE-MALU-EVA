@@ -52,7 +52,7 @@ const FunilMaluVsl = () => {
 
   return (
     <LazyMotion features={domAnimation} strict>
-      <div className="min-h-screen overflow-x-hidden" style={{ ...variant.vars, background: "var(--brand-background)" }}>
+      <div className="flex min-h-screen flex-col overflow-x-hidden" style={{ ...variant.vars, background: "var(--brand-background)" }}>
         <div className="relative w-full overflow-hidden px-4 py-2.5 text-center" style={{ background: variant.faixa.background }}>
           <div className="pointer-events-none absolute inset-0">
             <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 40" preserveAspectRatio="none">
@@ -122,7 +122,7 @@ const FunilMaluVsl = () => {
         </section>
 
         <section
-          className="relative h-44 overflow-hidden"
+          className="relative min-h-44 flex-1 overflow-hidden"
           style={{ background: "var(--lp-garantia-bg, linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%))" }}
           aria-hidden="true"
         >

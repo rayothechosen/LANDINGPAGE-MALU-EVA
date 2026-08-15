@@ -346,7 +346,7 @@ const LpMaluBase = ({ variant, contentOnly = false }: { variant: LpVariant; cont
           "Suporte no WhatsApp",
         ]}
         ofertaDePrice="97,45"
-        paidPrice="27,90"
+        paidPrice={isEva ? "27,90" : "37,90"}
         ofertaCtaLabel="COMPRAR AGORA"
         garantiaTitle="Garantia de 7 dias"
         garantiaBody="Se por qualquer motivo você não estiver satisfeita, basta solicitar o reembolso dentro de 7 dias. Você recebe 100% do seu dinheiro de volta, sem perguntas ou burocracias."
