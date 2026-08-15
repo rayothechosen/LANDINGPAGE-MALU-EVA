@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePersistentReveal } from "@/hooks/usePersistentReveal";
 import { LP_VARIANTS } from "@/lib/lpVariants";
 
 const PLAYER_ID = "6a7fa6974746a66b4b3e1a18";
@@ -9,6 +10,7 @@ const PLAYER_SCRIPT =
 const FunilMaluV1 = () => {
   const variant = LP_VARIANTS.malu;
   const navigate = useNavigate();
+  const { elementRef: buttonRef, revealed: buttonRevealed } = usePersistentReveal<HTMLElement>();
 
   useEffect(() => {
     document.title = "Teste a Malu gratuitamente";
@@ -92,7 +94,7 @@ const FunilMaluV1 = () => {
           </div>
         </div>
 
-        <section id="botao" className="mt-8 w-full max-w-[400px]" style={{ display: "none" }}>
+        <section ref={buttonRef} id="botao" className="mt-8 w-full max-w-[400px]" style={{ display: buttonRevealed ? "block" : "none" }}>
           <p className="mb-3 text-sm font-semibold text-black/50">
             Clique abaixo para testar a Malu agora:
           </p>

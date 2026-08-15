@@ -1,6 +1,7 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { LazyMotion, domAnimation, m as motion } from "framer-motion";
 import { Edge } from "@/components/LpBody";
+import { usePersistentReveal } from "@/hooks/usePersistentReveal";
 import { LP_VARIANTS } from "@/lib/lpVariants";
 
 const LpMaluBase = lazy(() => import("@/components/LpMaluBase"));
@@ -10,8 +11,7 @@ const PLAYER_SCRIPT = `https://scripts.converteai.net/84921071-af8a-4102-8d78-2b
 
 const FunilMaluVsl = () => {
   const variant = LP_VARIANTS.malu;
-  const pageRef = useRef<HTMLDivElement>(null);
-  const [pageRevealed, setPageRevealed] = useState(false);
+  const { elementRef: pageRef, revealed: pageRevealed } = usePersistentReveal<HTMLDivElement>();
 
   useEffect(() => {
     document.title = "Tenha acesso à Malu";
@@ -23,23 +23,6 @@ const FunilMaluVsl = () => {
     script.async = true;
     script.dataset.funilVsl = PLAYER_ID;
     document.head.appendChild(script);
-  }, []);
-
-  useEffect(() => {
-    const node = pageRef.current;
-    if (!node) return;
-
-    const syncVisibility = () => {
-      if (node.style.display !== "none" && window.getComputedStyle(node).display !== "none") {
-        setPageRevealed(true);
-      }
-    };
-
-    const observer = new MutationObserver(syncVisibility);
-    observer.observe(node, { attributes: true, attributeFilter: ["style", "class", "hidden"] });
-    syncVisibility();
-
-    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
