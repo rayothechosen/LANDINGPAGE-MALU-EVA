@@ -43,6 +43,9 @@ Os arquivos `vercel.eva.json` e `vercel.malu.json` contêm as mesmas configuraç
 
 - `/` e `/home` não exibem a landing page.
 - `/lp-v1` abre a landing page correspondente.
+- `/funil-v1` abre a primeira etapa do funil gamificado na build Malu.
+- `/funil-v1/configurar` abre o teste guiado da Malu na build Malu.
+- `/funil-v1/vsl` abre a VSL de venda e libera a LP da Malu no momento do pitch.
 - `/obrigado` abre a página de obrigado correspondente.
 - `/obrigado/eva` permanece disponível somente na build Eva.
 - `/obrigado/malu` permanece disponível somente na build Malu.

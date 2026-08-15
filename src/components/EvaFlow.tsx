@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Check, ChevronRight, Play, Zap, Loader2, X, Clock,
+  ArrowLeft, Check, ChevronRight, Play, Pause, Zap, Loader2, X, Clock,
   RefreshCw, Shuffle, Captions, Mic, Scissors, Search, Wand2,
 } from "lucide-react";
 import { NichoIcon, EvaLoader, Starburst, type NichoTipo } from "@/components/EvaIcons";
@@ -21,6 +21,27 @@ const R2_EVA       = "https://pub-0b252875d435478a830daa595535d16c.r2.dev";
 
 export interface ProdutoLite {
   id: string; nome: string; preco: string; comissao: string; img: string; badge: string;
+  ranking?: {
+    soldTotal: string;
+    soldToday: string;
+    commissionToday: string;
+    reason: string;
+  };
+}
+
+export interface ProdutoFunil extends ProdutoLite {
+  videos?: string[];
+  captions?: string[];
+  hashtags?: string;
+}
+
+export interface EvaFlowOptions {
+  niches?: { id: string; label: string; tipo: NichoTipo }[];
+  catalog?: Record<string, ProdutoFunil[]>;
+  quantities?: number[];
+  skipProductVerification?: boolean;
+  simpleReview?: boolean;
+  onApprove?: () => void;
 }
 
 interface VideoRow { message_id: string; nicho: string; link_video: string | null; }
@@ -173,10 +194,11 @@ const DEMO_VIDEOS: VideoRow[] = [
 
 // ─── Fase 1: Nicho ───────────────────────────────────────────────────────────
 
-function FaseNicho({ nicho, setNicho, onNext, onBack, brandName }: {
+function FaseNicho({ nicho, setNicho, onNext, onBack, brandName, items, description }: {
   nicho: string; setNicho: (v: string) => void; onNext: () => void; onBack: () => void; brandName: string;
+  items?: { id: string; label: string; tipo: NichoTipo }[]; description?: string;
 }) {
-  const nichos = NICHOS.map(n => n.id === "auto" ? { ...n, label: `A ${brandName} escolhe` } : n);
+  const nichos = (items ?? NICHOS).map(n => n.id === "auto" ? { ...n, label: `A ${brandName} escolhe` } : n);
   return (
     <div className="min-h-screen" style={PAGE_BG}>
       <div className="max-w-md mx-auto">
@@ -186,7 +208,7 @@ function FaseNicho({ nicho, setNicho, onNext, onBack, brandName }: {
           <h2 className="font-extrabold text-[1.7rem] leading-[1.15] tracking-tight">
             Qual nicho você<br /><em className="italic" style={{ color: P }}>quer trabalhar?</em>
           </h2>
-          <p className="text-foreground/50 text-[12px] mt-3 mb-5">Neste demonstrativo, os mesmos produtos pet aparecem independentemente do nicho escolhido.</p>
+          <p className="text-foreground/50 text-[12px] mt-3 mb-5">{description ?? "Neste demonstrativo, os mesmos produtos pet aparecem independentemente do nicho escolhido."}</p>
           <div className="grid grid-cols-2 gap-3 mb-6">
             {nichos.map((n, i) => {
               const sel = nicho === n.id;
@@ -226,21 +248,23 @@ function FaseNicho({ nicho, setNicho, onNext, onBack, brandName }: {
 
 // ─── Fase 2: Pesquisa de produtos ────────────────────────────────────────────
 
-function FasePesquisa({ onDone, searchImageUrl, brandName }: { onDone: () => void; searchImageUrl: string; brandName: string }) {
-  const steps = useMemo(() => PESQUISA_STEPS(), []);
+function FasePesquisa({ onDone, searchImageUrl, brandName, customSteps }: { onDone: () => void; searchImageUrl: string; brandName: string; customSteps?: string[] }) {
+  const steps = useMemo(() => customSteps ?? PESQUISA_STEPS(), [customSteps]);
   const [idx, setIdx] = useState(0);
   const last = steps.length - 1;
 
   useEffect(() => {
     if (idx > last) { onDone(); return; }
-    const t = setTimeout(() => setIdx(i => i + 1), idx === last ? 620 : 740);
+    const stepDuration = customSteps ? (idx === last ? 420 : 340) : (idx === last ? 620 : 740);
+    const t = setTimeout(() => setIdx(i => i + 1), stepDuration);
     return () => clearTimeout(t);
-  }, [idx, last, onDone]);
+  }, [customSteps, idx, last, onDone]);
 
   const visible = Math.min(idx + 1, steps.length);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
       className="min-h-screen flex flex-col items-center justify-center px-8" style={PAGE_BG}>
       <div className="relative w-full max-w-xs">
         {/* Eva procurando os produtos */}
@@ -251,6 +275,7 @@ function FasePesquisa({ onDone, searchImageUrl, brandName }: { onDone: () => voi
           </motion.div>
           <motion.img src={searchImageUrl} alt={`${brandName} pesquisando`} draggable={false}
             className="relative" style={{ width: 148, height: "auto" }}
+            loading="eager" decoding="async" fetchPriority="high"
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: [0, -6, 0] }}
             transition={{ opacity: { duration: 0.5 }, y: { duration: 3.4, repeat: Infinity, ease: "easeInOut" } }} />
@@ -283,48 +308,115 @@ function FasePesquisa({ onDone, searchImageUrl, brandName }: { onDone: () => voi
 
 // ─── Fase 3: Escolha do produto ──────────────────────────────────────────────
 
-function FaseProdutos({ produtos, sel, setSel, onNext, onBack }: {
+function FaseProdutos({ produtos, sel, setSel, onNext, onBack, topThree = false }: {
   produtos: ProdutoLite[]; sel: string | null; setSel: (id: string) => void; onNext: () => void; onBack: () => void;
+  topThree?: boolean;
 }) {
   return (
     <div className="min-h-screen" style={PAGE_BG}>
       <div className="max-w-md mx-auto">
         <TopBar step={1} label="Produto" onBack={onBack} />
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="px-5 pb-28">
-          <p className="text-[10px] font-bold tracking-[0.18em] text-foreground/40 uppercase mb-3">Oportunidades encontradas</p>
+          <p className="text-[10px] font-bold tracking-[0.18em] text-foreground/40 uppercase mb-3">
+            {topThree ? "Ranking atualizado hoje" : "Oportunidades encontradas"}
+          </p>
           <h2 className="font-extrabold text-[1.7rem] leading-[1.15] tracking-tight">
-            Melhores produtos<br /><em className="italic" style={{ color: P }}>para você vender</em>
+            {topThree ? (
+              <>Top 3 produtos<br /><em className="italic" style={{ color: P }}>mais vendidos hoje</em></>
+            ) : (
+              <>Melhores produtos<br /><em className="italic" style={{ color: P }}>para você vender</em></>
+            )}
           </h2>
           <p className="text-foreground/50 text-[12px] mt-3 mb-5">
-            Escolha uma das seis imagens da escova a vapor para pets.
+            {topThree ? "Escolha um dos três produtos mais vendidos de hoje." : "Escolha uma das seis imagens da escova a vapor para pets."}
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            {produtos.map((p, i) => {
-              const isSel = sel === p.id;
-              return (
-                <motion.div key={p.id} onClick={() => setSel(p.id)}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0, scale: isSel ? 1.02 : 1 }}
-                  whileTap={{ scale: 0.96 }}
-                  transition={{ delay: 0.04 * i }}
-                  className="relative bg-white rounded-[1.4rem] overflow-hidden cursor-pointer"
-                  style={{
-                    border: isSel ? `1.5px solid ${P}` : CARD_EDGE,
-                    boxShadow: isSel ? "0 12px 28px rgba(122,43,245,0.28)" : "0 4px 12px rgba(22,19,14,0.06)",
-                  }}>
-                  {isSel && (
-                    <motion.div className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center"
-                      initial={{ scale: 0 }} animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 320, damping: 16 }}
-                      style={{ background: LIME, boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>
-                      <Check className="w-4 h-4" strokeWidth={3.5} style={{ color: INK }} />
-                    </motion.div>
-                  )}
-                  <img src={p.img} alt="" className="w-full block" />
-                </motion.div>
-              );
-            })}
-          </div>
+          {topThree ? (
+            <div className="space-y-3.5">
+              {produtos.map((p, i) => {
+                const isSel = sel === p.id;
+                const ranking = p.ranking;
+                return (
+                  <motion.div key={p.id} onClick={() => setSel(p.id)}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0, scale: isSel ? 1.015 : 1 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ delay: 0.05 * i }}
+                    className="relative flex items-stretch bg-white rounded-[1.4rem] overflow-hidden cursor-pointer"
+                    style={{
+                      border: isSel ? `1.5px solid ${P}` : CARD_EDGE,
+                      boxShadow: isSel ? "0 12px 28px rgba(249,115,22,0.24)" : "0 4px 12px rgba(22,19,14,0.06)",
+                    }}>
+                    <div className="relative w-[43%] shrink-0 self-start">
+                      <img src={p.img} alt={p.nome} className="block h-auto w-full" loading="eager" decoding="async" />
+                      <motion.div
+                        initial={{ scale: 0, rotate: -12 }}
+                        animate={{ scale: 1, rotate: i === 0 ? -4 : i === 1 ? 3 : -2 }}
+                        transition={{ type: "spring", stiffness: 320, damping: 16, delay: 0.08 + i * 0.04 }}
+                        className="absolute top-2 left-2 z-10 h-9 min-w-9 px-2 rounded-full flex items-center justify-center text-[11px] font-extrabold"
+                        style={{
+                          background: i === 0 ? P : i === 1 ? CARD_DARK : LIME,
+                          color: i === 2 ? INK : "#fff",
+                          boxShadow: "0 5px 14px rgba(22,19,14,0.24)",
+                          border: "2px solid rgba(255,255,255,0.9)",
+                        }}>
+                        #{i + 1}
+                      </motion.div>
+                    </div>
+
+                    <div className="min-w-0 flex-1 px-3 py-3.5 flex flex-col justify-center">
+                      {isSel && (
+                        <motion.div className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center"
+                          initial={{ scale: 0 }} animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 320, damping: 16 }}
+                          style={{ background: LIME, boxShadow: "0 4px 12px rgba(0,0,0,0.18)" }}>
+                          <Check className="w-4 h-4" strokeWidth={3.5} style={{ color: INK }} />
+                        </motion.div>
+                      )}
+                      <p className="text-[8px] font-extrabold tracking-[0.12em] uppercase mb-1" style={{ color: P }}>
+                        Top {i + 1} do dia
+                      </p>
+                      <p className="text-[13px] font-extrabold leading-tight pr-4">Por que está no Top {i + 1}?</p>
+
+                      <div className="space-y-2 mt-3">
+                        <div className="rounded-xl px-2.5 py-2" style={{ background: "rgba(249,115,22,0.09)" }}>
+                          <p className="text-[7px] font-bold uppercase tracking-wide text-foreground/40">Vendas hoje</p>
+                          <p className="text-[13px] font-extrabold leading-tight mt-0.5" style={{ color: P }}>{ranking?.soldToday}</p>
+                        </div>
+                        <div className="rounded-xl px-2.5 py-2" style={{ background: "rgba(77,124,15,0.08)" }}>
+                          <p className="text-[7px] font-bold uppercase tracking-wide" style={{ color: "#4d7c0f" }}>Comissões hoje</p>
+                          <p className="text-[13px] font-extrabold leading-tight mt-0.5" style={{ color: "#4d7c0f" }}>{ranking?.commissionToday}</p>
+                        </div>
+                      </div>
+
+                      <p className="text-[9px] font-semibold leading-snug text-foreground/50 mt-3">{ranking?.reason}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {produtos.map((p, i) => {
+                const isSel = sel === p.id;
+                return (
+                  <motion.div key={p.id} onClick={() => setSel(p.id)}
+                    initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0, scale: isSel ? 1.02 : 1 }}
+                    whileTap={{ scale: 0.96 }} transition={{ delay: 0.04 * i }}
+                    className="relative bg-white rounded-[1.4rem] overflow-hidden cursor-pointer"
+                    style={{ border: isSel ? `1.5px solid ${P}` : CARD_EDGE, boxShadow: isSel ? "0 12px 28px rgba(122,43,245,0.28)" : "0 4px 12px rgba(22,19,14,0.06)" }}>
+                    {isSel && (
+                      <motion.div className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center"
+                        initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 320, damping: 16 }}
+                        style={{ background: LIME, boxShadow: "0 4px 12px rgba(0,0,0,0.25)" }}>
+                        <Check className="w-4 h-4" strokeWidth={3.5} style={{ color: INK }} />
+                      </motion.div>
+                    )}
+                    <img src={p.img} alt="" className="block w-full" loading="eager" decoding="async" />
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </motion.div>
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-5 pt-8 pointer-events-none"
           style={{ background: "linear-gradient(180deg, transparent 0%, #F4EFE6 55%)" }}>
@@ -406,9 +498,9 @@ function FaseVitrine({ produto, onDone, brandName }: { produto: ProdutoLite; onD
 
 // ─── Fase 5: Configuração dos vídeos ─────────────────────────────────────────
 
-function FaseConfig({ qtd, setQtd, formato, setFormato, onNext, onBack, brandName }: {
+function FaseConfig({ qtd, setQtd, formato, setFormato, onNext, onBack, brandName, quantities }: {
   qtd: number; setQtd: (n: number) => void; formato: string; setFormato: (f: string) => void;
-  onNext: () => void; onBack: () => void; brandName: string;
+  onNext: () => void; onBack: () => void; brandName: string; quantities?: number[];
 }) {
   const formatos = FORMATOS.map(f => f.id === "auto" ? { ...f, label: `Deixar a ${brandName} escolher` } : f);
   return (
@@ -420,9 +512,11 @@ function FaseConfig({ qtd, setQtd, formato, setFormato, onNext, onBack, brandNam
           <h2 className="font-extrabold text-[1.7rem] leading-[1.15] tracking-tight">
             Quantos vídeos<br /><em className="italic" style={{ color: P }}>vamos criar?</em>
           </h2>
-          <p className="text-foreground/50 text-[12px] mt-3">Nesta demonstração, os três vídeos pet são sempre utilizados, independentemente da quantidade selecionada.</p>
+          <p className="text-foreground/50 text-[12px] mt-3">
+            {quantities ? "Escolha quantos vídeos a Malu deve criar com o produto selecionado." : "Nesta demonstração, os três vídeos pet são sempre utilizados, independentemente da quantidade selecionada."}
+          </p>
           <div className="grid grid-cols-3 gap-3 mt-5 mb-7">
-            {[3, 5, 10].map((n, i) => {
+            {(quantities ?? [3, 5, 10]).map((n, i) => {
               const sel = qtd === n;
               return (
                 <motion.div key={n} onClick={() => setQtd(n)}
@@ -482,22 +576,23 @@ function FaseConfig({ qtd, setQtd, formato, setFormato, onNext, onBack, brandNam
 // ─── Fase 6: EVA Studio ──────────────────────────────────────────────────────
 
 function Waveform() {
+  const bars = [7, 13, 9, 18, 11, 21, 14, 19, 10, 16, 8, 20, 12, 17];
   return (
     <div className="flex items-end gap-[3px] h-6">
-      {Array.from({ length: 14 }).map((_, i) => (
+      {bars.map((height, i) => (
         <motion.div key={i} className="w-[3px] rounded-full" style={{ background: LIME }}
-          animate={{ height: [4 + Math.random() * 6, 10 + Math.random() * 14, 4 + Math.random() * 6] }}
-          transition={{ duration: 0.5 + Math.random() * 0.4, repeat: Infinity, ease: "easeInOut" }} />
+          animate={{ height: [5 + (i % 4), height, 5 + (i % 4)] }}
+          transition={{ duration: 0.55 + (i % 5) * 0.07, repeat: Infinity, ease: "easeInOut" }} />
       ))}
     </div>
   );
 }
 
-function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName }: {
+function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName, captions, fastMode = false }: {
   produto: ProdutoLite; pool: VideoRow[]; editingImageUrl: string; brandName: string;
-  onDone: (videos: VideoRow[]) => void;
+  onDone: (videos: VideoRow[]) => void; captions?: string[]; fastMode?: boolean;
 }) {
-  const videos = useMemo(() => pool.slice(0, DEMO_VIDEOS.length), [pool]);
+  const videos = useMemo(() => pool, [pool]);
   const [vidIdx, setVidIdx] = useState(0);
   const [stepIdx, setStepIdx] = useState(0);
   const doneRef = useRef(false);
@@ -505,7 +600,8 @@ function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName }: {
   const totalSteps = STUDIO_STEPS.length;
   const current = videos[Math.min(vidIdx, videos.length - 1)];
   const fx = STUDIO_STEPS[Math.min(stepIdx, totalSteps - 1)]?.fx;
-  const legenda = LEGENDAS[vidIdx % LEGENDAS.length];
+  const studioCaptions = captions ?? LEGENDAS;
+  const legenda = studioCaptions[vidIdx % studioCaptions.length];
 
   useEffect(() => {
     if (doneRef.current) return;
@@ -513,20 +609,21 @@ function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName }: {
     if (stepIdx >= totalSteps) {
       if (vidIdx + 1 >= videos.length) {
         doneRef.current = true;
-        const t = setTimeout(() => onDone(videos), 900);
+        const t = setTimeout(() => onDone(videos), fastMode ? 400 : 900);
         return () => clearTimeout(t);
       }
-      const t = setTimeout(() => { setVidIdx(v => v + 1); setStepIdx(0); }, 420);
+      const t = setTimeout(() => { setVidIdx(v => v + 1); setStepIdx(0); }, fastMode ? 180 : 420);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => setStepIdx(s => s + 1), fast ? 250 : 480);
+    const t = setTimeout(() => setStepIdx(s => s + 1), fastMode ? 110 : fast ? 250 : 480);
     return () => clearTimeout(t);
-  }, [stepIdx, vidIdx, totalSteps, videos, onDone]);
+  }, [stepIdx, vidIdx, totalSteps, videos, onDone, fastMode]);
 
   const pct = Math.min(100, Math.round((stepIdx / totalSteps) * 100));
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
       className="min-h-screen" style={PAGE_BG}>
       <div className="max-w-md mx-auto px-5 pt-7 pb-12">
         {/* Header com a Eva editando */}
@@ -544,6 +641,7 @@ function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName }: {
           </div>
           <motion.img src={editingImageUrl} alt={`${brandName} editando`} draggable={false}
             className="shrink-0 -mb-1" style={{ width: 96, height: "auto" }}
+            loading="eager" decoding="async"
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0, y: [0, -4, 0] }}
             transition={{ opacity: { duration: 0.4 }, x: { duration: 0.4 }, y: { duration: 3.2, repeat: Infinity, ease: "easeInOut" } }} />
@@ -554,7 +652,7 @@ function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName }: {
           <div className="relative shrink-0 rounded-[1.4rem] overflow-hidden"
             style={{ width: 172, height: 300, background: "#0A0A0A", boxShadow: "0 16px 36px rgba(22,19,14,0.30)" }}>
             {current?.link_video && (
-              <video key={current.message_id} src={current.link_video} autoPlay muted loop playsInline
+              <video key={current.message_id} src={current.link_video} autoPlay muted loop playsInline preload="auto" poster={produto.img}
                 onCanPlay={(e) => { void (e.currentTarget as HTMLVideoElement).play().catch(() => {}); }}
                 className="w-full h-full object-cover" />
             )}
@@ -749,9 +847,51 @@ function FaseStudio({ produto, pool, onDone, editingImageUrl, brandName }: {
 
 // ─── Fase 7: Revisão e postagem ──────────────────────────────────────────────
 
-function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, channels }: {
+function InlineFlowPreview({ video, duration, index, poster }: { video: VideoRow; duration: number; index: number; poster: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  async function toggle() {
+    const element = videoRef.current;
+    if (!element) return;
+    if (element.paused) {
+      await element.play().catch(() => undefined);
+      setPlaying(!element.paused);
+    } else {
+      element.pause();
+      setPlaying(false);
+    }
+  }
+
+  return (
+    <button type="button" onClick={toggle}
+      className="relative w-[86px] h-[150px] rounded-xl overflow-hidden shrink-0"
+      style={{ background: "#0A0A0A" }}
+      aria-label={`${playing ? "Pausar" : "Reproduzir"} vídeo ${index + 1}`}>
+      {video.link_video && (
+        <video ref={videoRef} src={video.link_video} playsInline preload="metadata" poster={poster} disablePictureInPicture
+          onLoadedMetadata={(event) => {
+            const element = event.currentTarget;
+            if (element.duration > 0) element.currentTime = Math.min(0.1, element.duration / 2);
+          }}
+          onEnded={() => setPlaying(false)} className="w-full h-full object-cover" />
+      )}
+      <span className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.18)" }}>
+        <span className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.55)" }}>
+          {playing ? <Pause className="w-3.5 h-3.5 text-white" fill="white" /> : <Play className="w-3.5 h-3.5 text-white ml-0.5" fill="white" />}
+        </span>
+      </span>
+      <span className="absolute top-1.5 right-1.5 text-[8.5px] font-extrabold text-white bg-black/55 px-1.5 py-0.5 rounded-full">
+        {duration}s
+      </span>
+    </button>
+  );
+}
+
+function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, channels, captions, hashtags, simpleReview = false, onApprove }: {
   produto: ProdutoLite; videos: VideoRow[]; extras: VideoRow[];
   onBack: () => void; onTrocar: () => void; brandName: string; channels: BrandTheme["channels"];
+  captions?: string[]; hashtags?: string; simpleReview?: boolean; onApprove?: () => void;
 }) {
   const [lista, setLista] = useState(videos);
   const [regen, setRegen] = useState<{ i: number; label: string } | null>(null);
@@ -761,6 +901,8 @@ function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, cha
   const extraRef = useRef(0);
 
   const dur = useMemo(() => lista.map((_, i) => [17, 21, 33][i] ?? 20), [lista]);
+  const reviewCaptions = captions ?? LEGENDAS;
+  const reviewHashtags = hashtags ?? (brandName === "Malu" ? HASHTAGS_MALU : HASHTAGS);
 
   function refazer(i: number, label: string) {
     if (regen !== null) return;
@@ -799,38 +941,42 @@ function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, cha
                 className="bg-white rounded-2xl p-3.5" style={{ border: CARD_EDGE, boxShadow: "0 4px 14px rgba(22,19,14,0.07)" }}>
                 <div className="flex gap-3">
                   {/* Prévia */}
-                  <div className="relative w-[86px] h-[150px] rounded-xl overflow-hidden shrink-0 cursor-pointer"
-                    style={{ background: "#0A0A0A" }}
-                    onClick={() => v.link_video && setModalUrl(v.link_video)}>
-                    {regen?.i === i ? (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
-                        <Loader2 className="w-5 h-5 animate-spin" style={{ color: LIME }} />
-                        <span className="text-[8px] font-bold text-white/60 text-center px-1">{regen.label}</span>
-                      </div>
-                    ) : (
-                      <>
-                        {v.link_video && (
-                          <video key={v.message_id} src={v.link_video} muted playsInline preload="metadata"
-                            onLoadedMetadata={(e) => { (e.target as HTMLVideoElement).currentTime = 0.1; }}
-                            className="w-full h-full object-cover" />
-                        )}
-                        <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.18)" }}>
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.55)" }}>
-                            <Play className="w-3.5 h-3.5 text-white ml-0.5" fill="white" />
-                          </div>
+                  {simpleReview ? (
+                    <InlineFlowPreview video={v} duration={dur[i]} index={i} poster={produto.img} />
+                  ) : (
+                    <div className="relative w-[86px] h-[150px] rounded-xl overflow-hidden shrink-0 cursor-pointer"
+                      style={{ background: "#0A0A0A" }}
+                      onClick={() => v.link_video && setModalUrl(v.link_video)}>
+                      {regen?.i === i ? (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
+                          <Loader2 className="w-5 h-5 animate-spin" style={{ color: LIME }} />
+                          <span className="text-[8px] font-bold text-white/60 text-center px-1">{regen.label}</span>
                         </div>
-                        <span className="absolute top-1.5 right-1.5 text-[8.5px] font-extrabold text-white bg-black/55 px-1.5 py-0.5 rounded-full">
-                          {dur[i]}s
-                        </span>
-                      </>
-                    )}
-                  </div>
+                      ) : (
+                        <>
+                          {v.link_video && (
+                            <video key={v.message_id} src={v.link_video} muted playsInline preload="metadata"
+                              onLoadedMetadata={(e) => { (e.target as HTMLVideoElement).currentTime = 0.1; }}
+                              className="w-full h-full object-cover" />
+                          )}
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.18)" }}>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "rgba(0,0,0,0.55)" }}>
+                              <Play className="w-3.5 h-3.5 text-white ml-0.5" fill="white" />
+                            </div>
+                          </div>
+                          <span className="absolute top-1.5 right-1.5 text-[8.5px] font-extrabold text-white bg-black/55 px-1.5 py-0.5 rounded-full">
+                            {dur[i]}s
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
                   {/* Infos */}
                   <div className="flex-1 min-w-0">
                     <p className="text-[11.5px] font-bold text-foreground leading-snug line-clamp-2">
-                      {LEGENDAS[i % LEGENDAS.length]}
+                      {reviewCaptions[i % reviewCaptions.length]}
                     </p>
-                    <p className="text-[10px] font-semibold mt-1 line-clamp-1" style={{ color: P }}>{brandName === "Malu" ? HASHTAGS_MALU : HASHTAGS}</p>
+                    <p className="text-[10px] font-semibold mt-1 line-clamp-1" style={{ color: P }}>{reviewHashtags}</p>
                     <div className="flex items-start gap-1.5 mt-2.5 rounded-lg px-2 py-1.5"
                       style={{ background: "rgba(77,124,15,0.08)" }}>
                       <Check className="w-3 h-3 shrink-0 mt-[1px]" strokeWidth={3.5} style={{ color: "#4d7c0f" }} />
@@ -838,7 +984,7 @@ function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, cha
                         Materiais verificados: sem direitos autorais e liberados para publicação.
                       </p>
                     </div>
-                    <div className="flex gap-1.5 mt-2.5">
+                    {!simpleReview && <div className="flex gap-1.5 mt-2.5">
                       <button onClick={() => refazer(i, "gerando...")}
                         className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-[9.5px] font-bold active:scale-95 transition-transform"
                         style={{ background: "rgba(22,19,14,0.06)", color: INK }}>
@@ -849,7 +995,7 @@ function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, cha
                         style={{ background: "rgba(122,43,245,0.08)", color: P }}>
                         <Shuffle className="w-3 h-3" /> Trocar estilo
                       </button>
-                    </div>
+                    </div>}
                   </div>
                 </div>
               </motion.div>
@@ -883,7 +1029,7 @@ function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, cha
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-5 pt-8 pointer-events-none"
           style={{ background: "linear-gradient(180deg, transparent 0%, #F4EFE6 55%)" }}>
           <div className="max-w-md mx-auto pointer-events-auto">
-            <BtnLime onClick={() => setPostando(true)} disabled={selectedChannels.length === 0}>
+            <BtnLime onClick={onApprove ?? (() => setPostando(true))} disabled={selectedChannels.length === 0}>
               <ChannelDots channels={channels} selected={selectedChannels} size={13} /> Aprovar e postar
             </BtnLime>
           </div>
@@ -891,8 +1037,8 @@ function FaseRevisao({ produto, videos, extras, onBack, onTrocar, brandName, cha
       </div>
 
       <AnimatePresence>
-        {modalUrl && <VideoModal url={modalUrl} onClose={() => setModalUrl(null)} />}
-        {postando && <PopupTikTok videos={lista} onDone={onTrocar} brandName={brandName}
+        {!simpleReview && modalUrl && <VideoModal url={modalUrl} onClose={() => setModalUrl(null)} />}
+        {!onApprove && postando && <PopupTikTok videos={lista} onDone={onTrocar} brandName={brandName}
           channels={channels} selectedChannels={selectedChannels} />}
       </AnimatePresence>
     </div>
@@ -1111,52 +1257,156 @@ function PopupTikTok({ videos, onDone, brandName, channels, selectedChannels }: 
 
 type Fase = "nicho" | "pesquisa" | "produtos" | "vitrine" | "config" | "studio" | "revisao";
 
-export default function EvaFlow({ produtos, onExit, theme }: { produtos: ProdutoLite[]; onExit: () => void; theme: BrandTheme }) {
+function shuffledVideos(videos: VideoRow[]) {
+  const result = [...videos];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+  }
+  return result;
+}
+
+export default function EvaFlow({ produtos, onExit, theme, options }: {
+  produtos: ProdutoFunil[]; onExit: () => void; theme: BrandTheme; options?: EvaFlowOptions;
+}) {
   const [fase, setFase] = useState<Fase>("nicho");
-  const [nicho, setNicho] = useState("moda");
+  const [nicho, setNicho] = useState(options?.niches?.[0]?.id ?? "moda");
+  const [resolvedNiche, setResolvedNiche] = useState(options?.niches?.[0]?.id ?? "moda");
   const [prodSel, setProdSel] = useState<string | null>(null);
   const [qtd, setQtd] = useState(3);
   const [formato, setFormato] = useState("auto");
   const [criados, setCriados] = useState<VideoRow[]>([]);
+  const [studioPool, setStudioPool] = useState<VideoRow[]>([]);
+  const imageWarmups = useRef(new Map<string, HTMLImageElement>());
+  const videoWarmups = useRef(new Map<string, HTMLVideoElement>());
 
-  // O demonstrativo sempre exibe os seis produtos recebidos, na mesma ordem.
-  const seis = useMemo(() => produtos.slice(0, 6), [produtos]);
+  const catalogProducts = options?.catalog?.[resolvedNiche] ?? produtos;
+  const seis = useMemo(() => catalogProducts.slice(0, options?.catalog ? 3 : 6), [catalogProducts, options?.catalog]);
   const produto = seis.find(p => p.id === prodSel) ?? seis[0];
-  const pool = DEMO_VIDEOS;
+  const pool = useMemo<VideoRow[]>(() => produto?.videos?.map((link, index) => ({
+    message_id: `${produto.id}-video-${index + 1}`,
+    nicho: resolvedNiche,
+    link_video: link,
+  })) ?? DEMO_VIDEOS, [produto, resolvedNiche]);
+
+  const warmImage = useCallback((url: string) => {
+    if (!url || imageWarmups.current.has(url)) return;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = url;
+    imageWarmups.current.set(url, image);
+  }, []);
+
+  const warmVideo = useCallback((url: string) => {
+    if (!url || videoWarmups.current.has(url)) return;
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.muted = true;
+    video.playsInline = true;
+    video.src = url;
+    video.load();
+    videoWarmups.current.set(url, video);
+  }, []);
+
+  useEffect(() => {
+    warmImage(theme.searchImageUrl);
+    warmImage(theme.editingImageUrl);
+    seis.forEach(item => warmImage(item.img));
+  }, [seis, theme.editingImageUrl, theme.searchImageUrl, warmImage]);
+
+  useEffect(() => {
+    if (fase !== "produtos" && fase !== "config") return;
+    pool.forEach(item => {
+      if (item.link_video) warmVideo(item.link_video);
+    });
+  }, [fase, pool, warmVideo]);
+
+  useEffect(() => () => {
+    videoWarmups.current.forEach(video => {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    });
+    videoWarmups.current.clear();
+    imageWarmups.current.clear();
+  }, []);
+
+  const searchSteps = useMemo(() => {
+    if (!options?.catalog) return undefined;
+    const nicheLabel = options.niches?.find(item => item.id === resolvedNiche)?.label ?? "selecionado";
+    return [
+      "Preparando o demonstrativo...",
+      `Analisando os produtos de ${nicheLabel.toLowerCase()}...`,
+      "Comparando as vendas das últimas 24 horas...",
+      "Separando os três produtos mais vendidos...",
+      "Verificando os vídeos disponíveis...",
+      "Organizando a experiência de edição...",
+      "Tudo pronto para escolher o produto!",
+    ];
+  }, [options?.catalog, options?.niches, resolvedNiche]);
 
   const goHome = useCallback(() => onExit(), [onExit]);
 
+  const selectProduct = useCallback((id: string) => {
+    setProdSel(id);
+    const selectedProduct = seis.find(item => item.id === id);
+    selectedProduct?.videos?.forEach(warmVideo);
+  }, [seis, warmVideo]);
+
+  function startSearch() {
+    let chosen = nicho;
+    if (nicho === "auto" && options?.niches) {
+      const available = options.niches.filter(item => item.id !== "auto" && options.catalog?.[item.id]);
+      chosen = available[Math.floor(Math.random() * available.length)]?.id ?? options.niches[0].id;
+    }
+    setResolvedNiche(chosen);
+    setProdSel(null);
+    setFase("pesquisa");
+  }
+
+  function startStudio() {
+    const selected = options?.catalog ? shuffledVideos(pool).slice(0, qtd) : pool;
+    selected.forEach(item => {
+      if (item.link_video) warmVideo(item.link_video);
+    });
+    setStudioPool(selected);
+    setFase("studio");
+  }
+
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       {fase === "nicho" && (
-        <motion.div key="nicho" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div key="nicho" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
           <FaseNicho nicho={nicho} setNicho={setNicho} brandName={theme.name}
-            onNext={() => setFase("pesquisa")} onBack={goHome} />
+            items={options?.niches}
+            description={options?.catalog ? "Escolha uma opção e a Malu encontra os produtos mais vendidos do dia." : undefined}
+            onNext={startSearch} onBack={goHome} />
         </motion.div>
       )}
       {fase === "pesquisa" && (
-        <FasePesquisa key="pesquisa" searchImageUrl={theme.searchImageUrl} brandName={theme.name}
+        <FasePesquisa key="pesquisa" searchImageUrl={theme.searchImageUrl} brandName={theme.name} customSteps={searchSteps}
           onDone={() => setFase("produtos")} />
       )}
       {fase === "produtos" && (
-        <motion.div key="produtos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <FaseProdutos produtos={seis} sel={prodSel} setSel={setProdSel}
-            onNext={() => setFase("vitrine")} onBack={() => setFase("nicho")} />
+        <motion.div key="produtos" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+          <FaseProdutos produtos={seis} sel={prodSel} setSel={selectProduct} topThree={Boolean(options?.catalog)}
+            onNext={() => setFase(options?.skipProductVerification ? "config" : "vitrine")} onBack={() => setFase("nicho")} />
         </motion.div>
       )}
       {fase === "vitrine" && produto && (
         <FaseVitrine key="vitrine" produto={produto} brandName={theme.name} onDone={() => setFase("config")} />
       )}
       {fase === "config" && (
-        <motion.div key="config" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div key="config" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
           <FaseConfig qtd={qtd} setQtd={setQtd} formato={formato} setFormato={setFormato} brandName={theme.name}
-            onNext={() => setFase("studio")} onBack={() => setFase("produtos")} />
+            quantities={options?.quantities} onNext={startStudio} onBack={() => setFase("produtos")} />
         </motion.div>
       )}
       {fase === "studio" && produto && (
         pool.length > 0 ? (
-          <FaseStudio key="studio" produto={produto} pool={pool}
+          <FaseStudio key="studio" produto={produto} pool={studioPool.length > 0 ? studioPool : pool}
             editingImageUrl={theme.editingImageUrl} brandName={theme.name}
+            captions={produto.captions} fastMode={Boolean(options?.catalog)}
             onDone={(v) => { setCriados(v); setFase("revisao"); }} />
         ) : (
           <motion.div key="studio-loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -1166,9 +1416,11 @@ export default function EvaFlow({ produtos, onExit, theme }: { produtos: Produto
         )
       )}
       {fase === "revisao" && produto && (
-        <motion.div key="revisao" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div key="revisao" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
           <FaseRevisao produto={produto} videos={criados} brandName={theme.name} channels={theme.channels}
-            extras={pool.slice(qtd)} onBack={() => setFase("config")} onTrocar={goHome} />
+            extras={pool.slice(qtd)} captions={produto.captions} hashtags={produto.hashtags}
+            simpleReview={options?.simpleReview} onApprove={options?.onApprove}
+            onBack={() => setFase("config")} onTrocar={goHome} />
         </motion.div>
       )}
     </AnimatePresence>

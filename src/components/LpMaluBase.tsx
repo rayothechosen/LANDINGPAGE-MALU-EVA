@@ -54,7 +54,7 @@ function IconCarteira({ size = 27, stroke = INK, accent = "var(--brand-primary)"
 
 // Estrutura compartilhada pelas LPs: a configuração da variante troca apenas
 // identidade, copy e paleta, preservando as mesmas dobras e componentes.
-const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
+const LpMaluBase = ({ variant, contentOnly = false }: { variant: LpVariant; contentOnly?: boolean }) => {
   const { copy, assets } = variant;
   const CTA_LABEL = copy.ctaLabel;
   const CHECKOUT_LINK = copy.checkoutLink;
@@ -71,6 +71,7 @@ const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
   ];
 
   useEffect(() => {
+    if (contentOnly) return;
     if (document.querySelector("script[data-lp-vsl-player]")) return;
 
     // O VSL é o conteúdo principal da primeira dobra e precisa iniciar junto
@@ -80,13 +81,13 @@ const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
     script.async = true;
     script.dataset.lpVslPlayer = "true";
     document.head.appendChild(script);
-  }, [vslPlayerScript]);
+  }, [contentOnly, vslPlayerScript]);
 
   return (
     <LazyMotion features={domAnimation} strict>
       <div className="min-h-screen overflow-x-hidden" style={{ ...variant.vars, background: "var(--brand-background)" }}>
       {/* ===== FAIXA TOPO ===== */}
-      <div className="relative w-full py-2.5 px-4 text-center overflow-hidden"
+      {!contentOnly && <div className="relative w-full py-2.5 px-4 text-center overflow-hidden"
         style={{ background: variant.faixa.background }}>
         {variant.faixa.brush && (
           <div className="absolute inset-0 pointer-events-none">
@@ -101,13 +102,13 @@ const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
         <p className="relative text-sm font-bold tracking-wide" style={{ color: variant.faixa.color }}>
           {isEva ? "O novo jeito de vender no TikTok Shop no automático" : "O novo jeito de vender na Shopee no automático"}
         </p>
-      </div>
-      {variant.checkerColors && (
+      </div>}
+      {!contentOnly && variant.checkerColors && (
         <div style={{ height: 14, background: `repeating-conic-gradient(${variant.checkerColors[0]} 0% 25%, ${variant.checkerColors[1]} 0% 50%) 0 0 / 28px 28px` }} />
       )}
 
       {/* ===== SEÇÃO 01: HERO + VSL (o vídeo atravessa a troca de seção) ===== */}
-      <section className="relative z-10 px-4 pt-8 pb-0 flex flex-col items-center text-center">
+      {!contentOnly && <section className="relative z-10 px-4 pt-8 pb-0 flex flex-col items-center text-center">
         <div className="max-w-md mx-auto w-full">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -168,12 +169,12 @@ const LpMaluBase = ({ variant }: { variant: LpVariant }) => {
             />
           </motion.div>
         </div>
-      </section>
+      </section>}
 
       {/* ===== SEÇÃO 02: QUEM É A MALU (fundo laranja, o vídeo invade a seção) ===== */}
-      <section className="relative px-4 pb-16 pt-56"
+      <section className={`relative px-4 pb-16 ${contentOnly ? "pt-10" : "pt-56"}`}
         style={{ background: "var(--lp-garantia-bg, linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%))" }}>
-        <Edge color="var(--brand-background)" position="top" />
+        {!contentOnly && <Edge color="var(--brand-background)" position="top" />}
         {/* Pinceladas orgânicas */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 500" preserveAspectRatio="none">
