@@ -7,6 +7,7 @@ const Obrigado = lazy(() => import("./pages/Obrigado"));
 const FunilMaluV1 = lazy(() => import("./pages/FunilMaluV1"));
 const FunilMaluConfig = lazy(() => import("./pages/FunilMaluConfig"));
 const FunilMaluVsl = lazy(() => import("./pages/FunilMaluVsl"));
+const BackRedirectMalu = lazy(() => import("./pages/BackRedirectMalu"));
 
 const activeVariant = import.meta.env.VITE_LP_VARIANT;
 
@@ -42,6 +43,14 @@ const App = () => (
         <Route
           path="/funil-v1/vsl"
           element={activeVariant === "malu" ? <FunilMaluVsl /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/back-redirect"
+          element={activeVariant === "malu" ? <BackRedirectMalu originalPrice="37,90" discountedPrice="18,95" checkoutLink="https://checkout.perfectpay.com.br/pay/PPU38CQFEL6" /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/back-redirect-27"
+          element={activeVariant === "malu" ? <BackRedirectMalu originalPrice="27,90" discountedPrice="13,95" checkoutLink="https://checkout.perfectpay.com.br/pay/PPU38CQFEL5" /> : <Navigate to="/" replace />}
         />
         <Route path="/obrigado" element={<Obrigado produto={activeVariant} />} />
         <Route path={`/obrigado/${activeVariant}`} element={<Obrigado produto={activeVariant} />} />

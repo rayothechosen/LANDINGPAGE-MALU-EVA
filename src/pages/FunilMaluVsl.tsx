@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { LazyMotion, domAnimation, m as motion } from "framer-motion";
 import { Edge } from "@/components/LpBody";
+import { useBackRedirect } from "@/hooks/useBackRedirect";
 import { usePersistentReveal } from "@/hooks/usePersistentReveal";
 import { LP_VARIANTS } from "@/lib/lpVariants";
 
@@ -12,6 +13,7 @@ const PLAYER_SCRIPT = `https://scripts.converteai.net/84921071-af8a-4102-8d78-2b
 const FunilMaluVsl = () => {
   const variant = LP_VARIANTS.malu;
   const { elementRef: pageRef, revealed: pageRevealed } = usePersistentReveal<HTMLDivElement>();
+  useBackRedirect("https://malu.afiliadosbrasil.top/back-redirect");
 
   useEffect(() => {
     document.title = "Tenha acesso à Malu";
