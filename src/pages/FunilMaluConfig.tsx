@@ -4,7 +4,6 @@ import EvaFlow, { type EvaFlowOptions, type ProdutoFunil } from "@/components/Ev
 import { BRAND_THEMES } from "@/lib/brandTheme";
 
 const ASSET_R2 = "https://pub-cb414c95ac474ad58b42a6e89390fd35.r2.dev";
-const VSL_PLAYER_SCRIPT = "https://scripts.converteai.net/84921071-af8a-4102-8d78-2be90931e856/players/6a7fa68f249e18139e7bd2b1/v4/player.js";
 
 function asset(filename: string) {
   return `${ASSET_R2}/${encodeURIComponent(filename)}`;
@@ -189,16 +188,17 @@ const FunilMaluConfig = () => {
   } as CSSProperties;
 
   useEffect(() => {
+    if (!document.querySelector(`link[data-funil-assets="${ASSET_R2}"]`)) {
+      const connection = document.createElement("link");
+      connection.rel = "preconnect";
+      connection.href = ASSET_R2;
+      connection.crossOrigin = "anonymous";
+      connection.dataset.funilAssets = ASSET_R2;
+      document.head.appendChild(connection);
+    }
+
     const preloadVsl = () => {
       void import("./FunilMaluVsl");
-
-      if (!document.querySelector(`link[href="${VSL_PLAYER_SCRIPT}"]`)) {
-        const link = document.createElement("link");
-        link.rel = "prefetch";
-        link.as = "script";
-        link.href = VSL_PLAYER_SCRIPT;
-        document.head.appendChild(link);
-      }
     };
 
     if ("requestIdleCallback" in window) {

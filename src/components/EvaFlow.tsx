@@ -1277,6 +1277,7 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
   const [formato, setFormato] = useState("auto");
   const [criados, setCriados] = useState<VideoRow[]>([]);
   const [studioPool, setStudioPool] = useState<VideoRow[]>([]);
+  const [orderedPool, setOrderedPool] = useState<VideoRow[]>([]);
   const imageWarmups = useRef(new Map<string, HTMLImageElement>());
   const videoWarmups = useRef(new Map<string, HTMLVideoElement>());
 
@@ -1288,6 +1289,7 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
     nicho: resolvedNiche,
     link_video: link,
   })) ?? DEMO_VIDEOS, [produto, resolvedNiche]);
+  const effectivePool = orderedPool.length > 0 ? orderedPool : pool;
 
   const warmImage = useCallback((url: string) => {
     if (!url || imageWarmups.current.has(url)) return;
@@ -1308,6 +1310,15 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
     videoWarmups.current.set(url, video);
   }, []);
 
+  const clearVideoWarmups = useCallback(() => {
+    videoWarmups.current.forEach(video => {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    });
+    videoWarmups.current.clear();
+  }, []);
+
   useEffect(() => {
     warmImage(theme.searchImageUrl);
     warmImage(theme.editingImageUrl);
@@ -1315,21 +1326,24 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
   }, [seis, theme.editingImageUrl, theme.searchImageUrl, warmImage]);
 
   useEffect(() => {
+    if (options?.catalog) {
+      if (fase !== "config" || !prodSel) return;
+      effectivePool.slice(0, qtd).forEach(item => {
+        if (item.link_video) warmVideo(item.link_video);
+      });
+      return;
+    }
+
     if (fase !== "produtos" && fase !== "config") return;
-    pool.forEach(item => {
+    effectivePool.forEach(item => {
       if (item.link_video) warmVideo(item.link_video);
     });
-  }, [fase, pool, warmVideo]);
+  }, [effectivePool, fase, options?.catalog, prodSel, qtd, warmVideo]);
 
   useEffect(() => () => {
-    videoWarmups.current.forEach(video => {
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-    });
-    videoWarmups.current.clear();
+    clearVideoWarmups();
     imageWarmups.current.clear();
-  }, []);
+  }, [clearVideoWarmups]);
 
   const searchSteps = useMemo(() => {
     if (!options?.catalog) return undefined;
@@ -1350,8 +1364,23 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
   const selectProduct = useCallback((id: string) => {
     setProdSel(id);
     const selectedProduct = seis.find(item => item.id === id);
-    selectedProduct?.videos?.forEach(warmVideo);
-  }, [seis, warmVideo]);
+    if (!options?.catalog) {
+      selectedProduct?.videos?.forEach(warmVideo);
+      return;
+    }
+
+    clearVideoWarmups();
+    const selectedPool = selectedProduct?.videos?.map((link, index) => ({
+      message_id: `${id}-video-${index + 1}`,
+      nicho: resolvedNiche,
+      link_video: link,
+    })) ?? [];
+    const ordered = shuffledVideos(selectedPool);
+    setOrderedPool(ordered);
+    ordered.slice(0, 3).forEach(item => {
+      if (item.link_video) warmVideo(item.link_video);
+    });
+  }, [clearVideoWarmups, options?.catalog, resolvedNiche, seis, warmVideo]);
 
   function startSearch() {
     let chosen = nicho;
@@ -1361,11 +1390,14 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
     }
     setResolvedNiche(chosen);
     setProdSel(null);
+    setOrderedPool([]);
+    setStudioPool([]);
+    clearVideoWarmups();
     setFase("pesquisa");
   }
 
   function startStudio() {
-    const selected = options?.catalog ? shuffledVideos(pool).slice(0, qtd) : pool;
+    const selected = options?.catalog ? effectivePool.slice(0, qtd) : pool;
     selected.forEach(item => {
       if (item.link_video) warmVideo(item.link_video);
     });
@@ -1403,8 +1435,8 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
         </motion.div>
       )}
       {fase === "studio" && produto && (
-        pool.length > 0 ? (
-          <FaseStudio key="studio" produto={produto} pool={studioPool.length > 0 ? studioPool : pool}
+        effectivePool.length > 0 ? (
+          <FaseStudio key="studio" produto={produto} pool={studioPool.length > 0 ? studioPool : effectivePool}
             editingImageUrl={theme.editingImageUrl} brandName={theme.name}
             captions={produto.captions} fastMode={Boolean(options?.catalog)}
             onDone={(v) => { setCriados(v); setFase("revisao"); }} />
@@ -1418,7 +1450,7 @@ export default function EvaFlow({ produtos, onExit, theme, options }: {
       {fase === "revisao" && produto && (
         <motion.div key="revisao" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
           <FaseRevisao produto={produto} videos={criados} brandName={theme.name} channels={theme.channels}
-            extras={pool.slice(qtd)} captions={produto.captions} hashtags={produto.hashtags}
+            extras={effectivePool.slice(qtd)} captions={produto.captions} hashtags={produto.hashtags}
             simpleReview={options?.simpleReview} onApprove={options?.onApprove}
             onBack={() => setFase("config")} onTrocar={goHome} />
         </motion.div>

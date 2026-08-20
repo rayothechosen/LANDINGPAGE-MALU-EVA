@@ -1,7 +1,8 @@
-import { useState, useRef, type ReactNode, type CSSProperties } from "react";
+import { useState, useRef, type ReactNode } from "react";
 import { m as motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronDown } from "lucide-react";
 import { Starburst } from "@/components/LpIcons";
+import { CtaBtn, Edge } from "@/components/LpPrimitives";
 import garantiaSelo from "@/assets/selo-garantia-gold.webp";
 
 // ─── Tema (mesmas constantes do painel demo) ─────────────────────────────────
@@ -12,7 +13,6 @@ const CARD_DARK   = "var(--brand-card-dark)";
 const CARD_EDGE   = "1.5px solid rgba(22,19,14,0.10)";
 const CARD_SHADOW = "0 2px 0 rgba(22,19,14,0.05), 0 14px 36px rgba(22,19,14,0.08)";
 const GRAD_CTA    = "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%)";
-const CTA_SHADOW  = "0 8px 24px color-mix(in srgb, var(--brand-primary) 42%, transparent), 0 2px 6px rgba(22,19,14,0.18)";
 // Cores específicas da LP, com fallback para o visual padrão.
 const GREEN       = "var(--lp-buy, #008526)";
 const STAR        = "var(--lp-star, var(--brand-primary))";
@@ -43,37 +43,6 @@ function Ornament({ size, color, decor = "star" }: { size: number; color: string
 // ─── Borda de troca de seção (onda) ──────────────────────────────────────────
 // A borda carrega a cor da seção vizinha SÓLIDA e é sobreposta à seção
 // colorida/gradiente, criando a transição orgânica entre elas.
-const EDGE_WAVE_TOP = "M0,0 L400,0 L400,10 C 356,26 322,4 276,14 C 232,23 204,6 160,15 C 118,24 84,6 44,15 C 22,20 8,12 0,16 Z";
-const EDGE_WAVE_BOTTOM = "M0,28 L400,28 L400,16 C 356,0 322,22 276,12 C 232,3 204,20 160,11 C 118,2 84,20 44,11 C 22,6 8,14 0,10 Z";
-
-export function Edge({ color, position }: { color: string; position: "top" | "bottom" }) {
-  return (
-    <div
-      className={`absolute left-0 right-0 pointer-events-none ${position === "top" ? "top-0" : "bottom-0"}`}
-      style={{ zIndex: 2 }}
-    >
-      <svg className="block w-full" style={{ height: 28 }} viewBox="0 0 400 28" preserveAspectRatio="none">
-        <path d={position === "top" ? EDGE_WAVE_TOP : EDGE_WAVE_BOTTOM} fill={color} />
-      </svg>
-      {/*
-        O limite de um SVG pode sofrer antialiasing quando a página está em
-        zoom fracionário. Esta faixa HTML cobre a junção com a seção vizinha
-        sem depender do último pixel do SVG, eliminando a linha em qualquer
-        escala ou densidade de tela.
-      */}
-      <span
-        className="absolute left-0 right-0 block"
-        style={{
-          height: 12,
-          background: color,
-          top: position === "top" ? -6 : undefined,
-          bottom: position === "bottom" ? -6 : undefined,
-        }}
-      />
-    </div>
-  );
-}
-
 export interface CardItem {
   image: string;
   title: string;
@@ -125,36 +94,6 @@ export interface LpBodyProps {
 }
 
 // ─── CTA (scroll até a oferta ou link direto, com brilho varrido) ────────────
-export function CtaBtn({ checkoutLink, variant = "scroll", look = "grad", children }: {
-  checkoutLink: string; variant?: "scroll" | "direct"; look?: "grad" | "white" | "green" | "yellow" | "intro" | "support";
-  children: ReactNode;
-}) {
-  const base = "relative overflow-hidden flex items-center justify-center gap-2 w-full text-center text-base font-extrabold py-4 px-6 rounded-full active:scale-[0.98] transition-transform";
-  const styles: Record<string, CSSProperties> = {
-    grad:   { background: GRAD_CTA, color: "#fff", boxShadow: CTA_SHADOW },
-    white:  { background: "#fff", color: INK, boxShadow: "0 8px 24px rgba(0,0,0,0.25)" },
-    green:  { background: GREEN, color: "#fff", boxShadow: `0 8px 24px color-mix(in srgb, ${GREEN} 40%, transparent)` },
-    yellow: { background: "var(--lp-banner, #FFBF29)", color: "var(--lp-banner-text, #16130E)", boxShadow: "0 8px 24px rgba(0,0,0,0.25)" },
-    intro:  { background: "var(--lp-intro-cta-bg, var(--lp-banner, #FFBF29))", color: "var(--lp-intro-cta-text, var(--lp-banner-text, #16130E))", boxShadow: "0 8px 24px rgba(0,0,0,0.25)" },
-    support:{ background: "var(--lp-support-cta-bg, linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%))", color: "var(--lp-support-cta-text, #fff)", boxShadow: `var(--lp-support-cta-shadow, ${CTA_SHADOW})` },
-  };
-  const shine = look === "grad" && (
-    <span className="absolute pointer-events-none" style={{
-      top: "-50%", left: "-20%", width: "60%", height: "200%", transform: "skewX(-15deg)",
-      background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.28) 45%, rgba(255,255,255,0.12) 55%, transparent 60%)",
-    }} />
-  );
-  if (variant === "direct") {
-    return <a href={checkoutLink} className={base} style={styles[look]}>{shine}{children}</a>;
-  }
-  return (
-    <button type="button" className={base} style={styles[look]}
-      onClick={() => document.getElementById("oferta")?.scrollIntoView({ behavior: "smooth", block: "center" })}>
-      {shine}{children}
-    </button>
-  );
-}
-
 // ─── Kicker pill (label uppercase no accent, padrão do painel) ───────────────
 function Kicker({ children, onDark = false }: { children: ReactNode; onDark?: boolean }) {
   return (
@@ -208,7 +147,7 @@ function VideoPlayer({ src }: { src: string }) {
   return (
     <div className="relative rounded-2xl overflow-hidden select-none" style={{ background: "#0A0A0A", boxShadow: "0 16px 36px rgba(0,0,0,0.35)" }}
       onClick={toggle} onMouseMove={resetHide}>
-      <video ref={ref} src={`${src}#t=0.001`} playsInline preload="metadata" muted={muted}
+      <video ref={ref} src={`${src}#t=0.001`} playsInline preload="none" muted={muted}
         className="w-full h-auto block"
         onTimeUpdate={() => { if (!ref.current) return; setCurrent(ref.current.currentTime); setProgress(ref.current.currentTime / duration * 100); }}
         onLoadedMetadata={() => { if (!ref.current) return; setDuration(ref.current.duration); ref.current.currentTime = 0.001; }}
@@ -330,7 +269,16 @@ function FeatureCard({ item, index, badge, decor }: { item: CardItem; index: num
         </div>
       </div>
       <div className="w-full rounded-xl overflow-hidden" style={{ border: CARD_EDGE }}>
-        <img src={item.image} alt={item.alt} className="w-full h-auto object-cover" loading="lazy" decoding="async" fetchPriority="low" />
+        <img
+          src={item.image}
+          alt={item.alt}
+          width={1254}
+          height={1254}
+          className="w-full h-auto object-cover"
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
+        />
       </div>
     </motion.div>
   );
@@ -477,6 +425,8 @@ const LpBody = (props: LpBodyProps) => {
                                 <img
                                   src={author.image}
                                   alt={author.name}
+                                  width={96}
+                                  height={96}
                                   className="w-12 h-12 rounded-full object-cover shrink-0"
                                   style={{ border: "3px solid var(--brand-primary)", boxShadow: "0 4px 12px rgba(22,19,14,0.18)" }}
                                   loading="lazy"
@@ -489,7 +439,16 @@ const LpBody = (props: LpBodyProps) => {
                                 </div>
                               </div>
                             )}
-                            <img src={item.src} alt={`Depoimento de ${author?.name ?? `cliente ${i + 1}`}`} className="w-full h-auto block" loading="lazy" decoding="async" fetchPriority="low" />
+                            <img
+                              src={item.src}
+                              alt={`Depoimento de ${author?.name ?? `cliente ${i + 1}`}`}
+                              width={(item.imageIndex ?? i) >= 2 ? 1024 : 1086}
+                              height={(item.imageIndex ?? i) >= 2 ? 1536 : 1448}
+                              className="w-full h-auto block"
+                              loading="lazy"
+                              decoding="async"
+                              fetchPriority="low"
+                            />
                           </div>
                         );
                       })()}
@@ -578,7 +537,7 @@ const LpBody = (props: LpBodyProps) => {
               <div className="py-2.5 px-4 text-center" style={{ background: "var(--lp-banner, #FFBF29)" }}>
                 <span className="text-sm font-extrabold tracking-wide" style={{ color: "var(--lp-banner-text, #16130E)" }}>{ofertaBannerLabel}</span>
               </div>
-              <img src={ofertaImage} alt={ofertaTitle} className="w-full h-auto" loading="lazy" decoding="async" fetchPriority="low" />
+              <img src={ofertaImage} alt={ofertaTitle} width={1254} height={1254} className="w-full h-auto" loading="lazy" decoding="async" fetchPriority="low" />
             </div>
 
             <h3 className="font-extrabold text-lg text-foreground text-center mb-5">{ofertaTitle}</h3>
@@ -626,7 +585,7 @@ const LpBody = (props: LpBodyProps) => {
               <div className="absolute pointer-events-none" style={{ left: -30, top: -6 }}>
                 <Ornament size={50} color={STAR_ONDARK} decor={decor} />
               </div>
-              <img src={garantiaSelo} alt="Selo de garantia" className="w-44 h-auto mb-6 drop-shadow-2xl" loading="lazy" decoding="async" fetchPriority="low" />
+              <img src={garantiaSelo} alt="Selo de garantia" width={528} height={528} className="w-44 h-auto mb-6 drop-shadow-2xl" loading="lazy" decoding="async" fetchPriority="low" />
             </div>
             <h2 className="text-2xl font-extrabold text-white mb-4 tracking-tight" style={{ textShadow: "0 2px 12px rgba(0,0,0,0.35)" }}>
               {garantiaTitle}

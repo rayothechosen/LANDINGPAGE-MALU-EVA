@@ -8,41 +8,55 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://scripts.converteai.net" crossorigin />
-    <link rel="preconnect" href="https://pub-087c3f92e3134b8cb358b6210b3554f5.r2.dev" crossorigin />
-    <link rel="preconnect" href="https://pub-0b252875d435478a830daa595535d16c.r2.dev" crossorigin />
-    <link rel="preconnect" href="https://pub-cb414c95ac474ad58b42a6e89390fd35.r2.dev" crossorigin />
+    <link rel="preconnect" href="https://images.converteai.net" crossorigin />
+    <link rel="preconnect" href="%VITE_LOGO_ORIGIN%" crossorigin />
+    <link rel="dns-prefetch" href="https://pub-0b252875d435478a830daa595535d16c.r2.dev" />
+    <link rel="dns-prefetch" href="https://pub-cb414c95ac474ad58b42a6e89390fd35.r2.dev" />
     <link rel="dns-prefetch" href="https://pub-69ddd09562c34185a376f620c936f5db.r2.dev" />
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&amp;display=swap"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Poppins:wght@400;500;600;700;800&amp;display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
-    <script>
-      window.pixelId = "%VITE_UTMIFY_PIXEL_ID%";
-
-      function loadTrackingPixels() {
-        [
-          "https://cdn.utmify.com.br/scripts/pixel/pixel.js"
-        ].forEach(function (src) {
-          var script = document.createElement("script");
-          script.async = true;
-          script.src = src;
-          document.head.appendChild(script);
-        });
-      }
-
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(loadTrackingPixels, { timeout: 1800 });
-      } else {
-        window.setTimeout(loadTrackingPixels, 900);
-      }
-    </script>
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Poppins:wght@400;500;600;700;800&amp;display=swap" /></noscript>
+    <script>window.pixelId = "%VITE_UTMIFY_PIXEL_ID%";</script>
     <script
+      id="utmify-utms"
       src="https://cdn.utmify.com.br/scripts/utms/latest.js"
       data-utmify-prevent-xcod-sck
       data-utmify-prevent-subids
       async
-      defer
     ></script>
+    <script>
+      (function () {
+        var pixelLoaded = false;
+
+        function loadTrackingPixel() {
+          if (pixelLoaded) return;
+          pixelLoaded = true;
+          var script = document.createElement("script");
+          script.async = true;
+          script.src = "https://cdn.utmify.com.br/scripts/pixel/pixel.js";
+          document.head.appendChild(script);
+        }
+
+        function scheduleTrackingPixel() {
+          if ("requestIdleCallback" in window) {
+            window.requestIdleCallback(loadTrackingPixel, { timeout: 1800 });
+          } else {
+            window.setTimeout(loadTrackingPixel, 700);
+          }
+        }
+
+        var utmScript = document.getElementById("utmify-utms");
+        if (utmScript) {
+          utmScript.addEventListener("load", scheduleTrackingPixel, { once: true });
+          utmScript.addEventListener("error", scheduleTrackingPixel, { once: true });
+        }
+        window.addEventListener("load", scheduleTrackingPixel, { once: true });
+      })();
+    </script>
     <title>%VITE_SITE_TITLE%</title>
     <meta name="description" content="%VITE_SITE_DESCRIPTION%">
     <meta name="author" content="Afiliadas Brasil" />

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { LazyMotion, domAnimation, m as motion } from "framer-motion";
-import { Edge } from "@/components/LpBody";
+import { Edge } from "@/components/LpPrimitives";
 import { useBackRedirect } from "@/hooks/useBackRedirect";
 import { usePersistentReveal } from "@/hooks/usePersistentReveal";
 import { LP_VARIANTS } from "@/lib/lpVariants";

@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { LazyMotion, domAnimation, m as motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import LpBody, { Edge, CtaBtn } from "@/components/LpBody";
+import { Edge, CtaBtn } from "@/components/LpPrimitives";
 import { IconVideos, IconRelogio } from "@/components/LpIcons";
 import type { LpVariant } from "@/lib/lpVariants";
+
+const LpBody = lazy(() => import("@/components/LpBody"));
 
 // ─── Ícones autorais da seção "Quem é a Malu" (traço monoline do painel) ─────
 const INK = "#16130E";
@@ -69,6 +71,8 @@ const LpMaluBase = ({ variant, contentOnly = false }: { variant: LpVariant; cont
     "Faz cortes, edita e cria legendas e hashtags",
     "Posta no automático nos melhores horários para viralizar",
   ];
+  const [bodyReady, setBodyReady] = useState(contentOnly);
+  const bodyTriggerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (contentOnly) return;
@@ -82,6 +86,34 @@ const LpMaluBase = ({ variant, contentOnly = false }: { variant: LpVariant; cont
     script.dataset.lpVslPlayer = "true";
     document.head.appendChild(script);
   }, [contentOnly, vslPlayerScript]);
+
+  useEffect(() => {
+    if (contentOnly) {
+      setBodyReady(true);
+      return;
+    }
+
+    const revealBody = () => setBodyReady(true);
+    const observer = new IntersectionObserver(revealBody, { rootMargin: "200px" });
+    if (bodyTriggerRef.current) observer.observe(bodyTriggerRef.current);
+
+    let idleId: number | undefined;
+    const delayId = window.setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        idleId = window.requestIdleCallback(revealBody, { timeout: 1200 });
+      } else {
+        revealBody();
+      }
+    }, 500);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(delayId);
+      if (idleId !== undefined && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+    };
+  }, [contentOnly]);
 
   return (
     <LazyMotion features={domAnimation} strict>
@@ -259,6 +291,8 @@ const LpMaluBase = ({ variant, contentOnly = false }: { variant: LpVariant; cont
       </section>
 
       {/* ===== CORPO DA LP ===== */}
+      <div ref={bodyTriggerRef} className="h-px" aria-hidden="true" />
+      {bodyReady && <Suspense fallback={<div className="min-h-px" aria-hidden="true" />}>
       <LpBody
         checkoutLink={CHECKOUT_LINK}
         decor={variant.decor}
@@ -369,6 +403,7 @@ const LpMaluBase = ({ variant, contentOnly = false }: { variant: LpVariant; cont
         ]}
         footerBrand={`${copy.assistente} · Sua assistente virtual · Todos os direitos reservados`}
       />
+      </Suspense>}
       </div>
     </LazyMotion>
   );
