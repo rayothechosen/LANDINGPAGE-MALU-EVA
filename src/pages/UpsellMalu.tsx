@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { CheckCircle2, LockKeyhole, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 
 type UpsellSlug = "up01-live" | "up02-clonador" | "up03-comunidade";
 
@@ -87,94 +87,62 @@ const UpsellMalu = ({ slug }: UpsellMaluProps) => {
   }, [playerScript, upsell.playerId, upsell.title]);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#F7F0E6] text-[#0C0B09]">
-      <section className="relative border-t-[6px] border-[#0C0B09] bg-[#FFC326] px-4 py-2.5 text-center">
-        <p className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#0C0B09]">
-          Afiliados da Shopee
+    <main className="min-h-screen overflow-x-hidden bg-[#F4F4F4] text-[#0C0B09]">
+      <section className="bg-[#FFC326] px-4 py-3 text-center">
+        <p className="text-[12px] font-extrabold tracking-tight text-[#0C0B09]">
+          {upsell.title}
         </p>
       </section>
 
-      <section className="relative px-4 pb-12 pt-6">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-28 top-20 h-56 w-56 rounded-full bg-[#F86015]/8" />
-          <div className="absolute -right-24 bottom-32 h-64 w-64 rounded-full bg-[#30673A]/10" />
-        </div>
-
-        <div className="relative mx-auto flex w-full max-w-[430px] flex-col items-center text-center">
-          <p className="mb-4 text-[1.35rem] font-extrabold tracking-tight text-[#E63212]">
-            Shopee
-          </p>
-
-          <p className="mb-3 rounded-full bg-[#E63212] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(230,50,18,0.22)]">
+      <section className="px-4 pb-12 pt-5">
+        <div className="mx-auto flex w-full max-w-[430px] flex-col items-center text-center">
+          <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#E63212]">
             {upsell.alert}
           </p>
 
-          <h1 className="max-w-sm text-[1.55rem] font-extrabold leading-[1.16] tracking-tight sm:text-[1.75rem]">
+          <h1 className="max-w-[340px] text-[1.5rem] font-extrabold leading-[1.08] tracking-tight">
             {upsell.headline}
           </h1>
 
-          <div className="mt-5 w-full max-w-[400px] rounded-[1.35rem] bg-white p-2 shadow-[0_18px_42px_rgba(22,19,14,0.16)]">
+          <div className="mt-6 w-full max-w-[340px]">
             <div
-              className="overflow-hidden rounded-[0.95rem]"
+              className="overflow-hidden"
               dangerouslySetInnerHTML={{
                 __html: `<vturb-smartplayer id="vid-${upsell.playerId}" style="display:block;margin:0 auto;width:100%;max-width:400px;"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:${upsell.playerPadding} 0 0;z-index:0;background-color:black;"></div></vturb-smartplayer>`,
               }}
             />
           </div>
 
-          <div id="botao" className="mt-6 w-full" style={{ display: "none" }}>
-            <article className="overflow-hidden rounded-[1.35rem] bg-white text-left shadow-[0_18px_42px_rgba(22,19,14,0.14)]">
-              <div className="bg-[#0C0B09] px-5 py-3 text-center text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#FFC326]">
-                Oferta especial liberada
-              </div>
+          <div id="botao" className="mt-7 w-full max-w-[340px]" style={{ display: "none" }}>
+            {upsell.revealText && (
+              <p className="mb-5 text-center text-[12px] font-medium leading-relaxed text-black/45">
+                {upsell.revealText}
+              </p>
+            )}
 
-              <div className="px-5 pb-6 pt-5">
-                {upsell.revealText && (
-                  <p className="mb-4 text-center text-sm font-semibold text-[#E63212]">
-                    {upsell.revealText}
-                  </p>
-                )}
+            <div className="mb-5 text-center">
+              {upsell.originalPrice && (
+                <p className="text-[13px] font-semibold text-red-500 line-through">
+                  De R${upsell.originalPrice}
+                </p>
+              )}
+              <p className="mt-0.5 text-[2.15rem] font-extrabold leading-none tracking-tight text-[#008C2F]">
+                R${upsell.finalPrice}
+              </p>
+              {upsell.priceSuffix && (
+                <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-black/45">
+                  {upsell.priceSuffix}
+                </p>
+              )}
+            </div>
 
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3 text-sm font-semibold">
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-[#16A34A]" />
-                    Acesso imediato após a compra
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-semibold">
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-[#16A34A]" />
-                    Pagamento unico, sem mensalidade
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-semibold">
-                    <LockKeyhole className="h-5 w-5 shrink-0 text-[#16A34A]" />
-                    Condição exclusiva desta etapa
-                  </li>
-                </ul>
-
-                <div className="my-5 border-y border-black/10 py-5 text-center">
-                  {upsell.originalPrice && (
-                    <p className="text-sm font-semibold text-red-500 line-through">
-                      De R${upsell.originalPrice}
-                    </p>
-                  )}
-                  <p className="mt-1 text-[2.7rem] font-extrabold leading-none tracking-tight text-[#0A8F36]">
-                    R${upsell.finalPrice}
-                  </p>
-                  {upsell.priceSuffix && (
-                    <p className="mt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-black/45">
-                      {upsell.priceSuffix}
-                    </p>
-                  )}
-                </div>
-
-                <a
-                  href={addUpsellParam(upsell.checkoutUrl)}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A14] px-5 py-4 text-center text-[13px] font-extrabold text-white shadow-[0_14px_28px_rgba(248,96,21,0.32)] transition-transform active:scale-[0.98]"
-                >
-                  <ShoppingBag className="h-4 w-4" />
-                  {upsell.buttonText}
-                </a>
-              </div>
-            </article>
+            <a
+              href={addUpsellParam(upsell.checkoutUrl)}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#00952F] px-5 py-4 text-center text-[12px] font-extrabold text-white shadow-[0_12px_22px_rgba(0,149,47,0.22)] transition-transform active:scale-[0.98]"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              {upsell.buttonText}
+            </a>
           </div>
         </div>
       </section>
