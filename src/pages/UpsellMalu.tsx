@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { CheckCircle2, LockKeyhole, ShoppingBag } from "lucide-react";
-import { LP_VARIANTS } from "@/lib/lpVariants";
 
 type UpsellSlug = "up01-live" | "up02-clonador" | "up03-comunidade";
 
@@ -12,13 +11,11 @@ interface UpsellData {
   playerId: string;
   playerPadding: string;
   checkoutUrl: string;
-  nextUrl: string;
   revealText?: string;
   originalPrice?: string;
   finalPrice: string;
   priceSuffix?: string;
   buttonText: string;
-  declineText: string;
 }
 
 const UPSSELL_PARAM = "upsell";
@@ -37,12 +34,10 @@ const UPSELLS: Record<UpsellSlug, UpsellData> = {
     playerId: "6a88a7dd2a0e4f0bc1114bcd",
     playerPadding: "133.33333333333331%",
     checkoutUrl: "https://go.perfectpay.com.br/PPU38CQFHLT",
-    nextUrl: "https://malu.afiliadosbrasil.top/up02-clonador",
     revealText: "Essa condição promocional está disponível somente nesta página.",
     originalPrice: "97,00",
     finalPrice: "17,90",
     buttonText: "QUERO DESBLOQUEAR AS LIVES AUTOMÁTICAS",
-    declineText: "Continuar sem a função de lives automáticas",
   },
   "up02-clonador": {
     slug: "up02-clonador",
@@ -52,12 +47,10 @@ const UPSELLS: Record<UpsellSlug, UpsellData> = {
     playerId: "6a88a7bde7b0609e45982091",
     playerPadding: "133.33333333333331%",
     checkoutUrl: "https://go.perfectpay.com.br/PPU38CQFHM6",
-    nextUrl: "https://malu.afiliadosbrasil.top/up03-comunidade",
     revealText: "Essa função não voltará a estar disponível por esse valor.",
     originalPrice: "145,00",
     finalPrice: "45,00",
     buttonText: "QUERO ADICIONAR O CLONADOR DE VÍDEOS",
-    declineText: "Continuar sem o clonador de vídeos virais",
   },
   "up03-comunidade": {
     slug: "up03-comunidade",
@@ -67,11 +60,9 @@ const UPSELLS: Record<UpsellSlug, UpsellData> = {
     playerId: "6a88a7d092506d5973ba6ce4",
     playerPadding: "133.33333333333331%",
     checkoutUrl: "https://go.perfectpay.com.br/PPU38CQFHI9",
-    nextUrl: "https://malu.afiliadosbrasil.top/up04-obrigado",
     finalPrice: "24,90",
     priceSuffix: "pagamento único",
     buttonText: "QUERO ENTRAR NA COMUNIDADE VIP",
-    declineText: "Continuar sem entrar na comunidade agora",
   },
 };
 
@@ -81,7 +72,6 @@ interface UpsellMaluProps {
 
 const UpsellMalu = ({ slug }: UpsellMaluProps) => {
   const upsell = UPSELLS[slug];
-  const variant = LP_VARIANTS.malu;
   const playerScript = `https://scripts.converteai.net/84921071-af8a-4102-8d78-2be90931e856/players/${upsell.playerId}/v4/player.js`;
 
   useEffect(() => {
@@ -100,7 +90,7 @@ const UpsellMalu = ({ slug }: UpsellMaluProps) => {
     <main className="min-h-screen overflow-x-hidden bg-[#F7F0E6] text-[#0C0B09]">
       <section className="relative border-t-[6px] border-[#0C0B09] bg-[#FFC326] px-4 py-2.5 text-center">
         <p className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#0C0B09]">
-          {upsell.title}
+          Afiliados da Shopee
         </p>
       </section>
 
@@ -111,17 +101,9 @@ const UpsellMalu = ({ slug }: UpsellMaluProps) => {
         </div>
 
         <div className="relative mx-auto flex w-full max-w-[430px] flex-col items-center text-center">
-          <img
-            src={variant.copy.logoUrl}
-            alt={variant.copy.logoAlt}
-            className="mb-4 h-8 w-auto"
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            onError={(event) => {
-              event.currentTarget.style.display = "none";
-            }}
-          />
+          <p className="mb-4 text-[1.35rem] font-extrabold tracking-tight text-[#E63212]">
+            Shopee
+          </p>
 
           <p className="mb-3 rounded-full bg-[#E63212] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(230,50,18,0.22)]">
             {upsell.alert}
@@ -190,13 +172,6 @@ const UpsellMalu = ({ slug }: UpsellMaluProps) => {
                 >
                   <ShoppingBag className="h-4 w-4" />
                   {upsell.buttonText}
-                </a>
-
-                <a
-                  href={addUpsellParam(upsell.nextUrl)}
-                  className="mx-auto mt-4 block max-w-xs text-center text-xs font-semibold leading-relaxed text-black/45 underline-offset-4 hover:text-black/70 hover:underline"
-                >
-                  {upsell.declineText}
                 </a>
               </div>
             </article>

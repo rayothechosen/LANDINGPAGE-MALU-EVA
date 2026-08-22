@@ -76,6 +76,18 @@ const App = () => (
           element={activeVariant === "malu" ? <BackRedirectMalu originalPrice="27,90" discountedPrice="13,95" checkoutLink="https://checkout.perfectpay.com.br/pay/PPU38CQFEL5" /> : <Navigate to="/" replace />}
         />
         <Route
+          path="/live"
+          element={activeVariant === "malu" ? <UpsellMalu slug="up01-live" /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/clonador"
+          element={activeVariant === "malu" ? <UpsellMalu slug="up02-clonador" /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/comunidade"
+          element={activeVariant === "malu" ? <UpsellMalu slug="up03-comunidade" /> : <Navigate to="/" replace />}
+        />
+        <Route
           path="/up01-live"
           element={activeVariant === "malu" ? <UpsellMalu slug="up01-live" /> : <Navigate to="/" replace />}
         />
